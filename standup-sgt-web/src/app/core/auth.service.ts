@@ -20,7 +20,7 @@ interface User {
 @Injectable({ providedIn: 'root' })
 export class AuthService {
 
-  user: Observable<User>;
+  public user: Observable<User>;
 
   constructor(private firebaseAuthentication: AngularFireAuth, private firestore: AngularFirestore, private router: Router) {
     //// Get auth data, then get firestore user document || null
