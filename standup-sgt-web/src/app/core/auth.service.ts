@@ -1,9 +1,72 @@
 import { Injectable } from '@angular/core';
+import { Router } from '@angular/router';
 
-@Injectable({
-  providedIn: 'root'
-})
+import { auth } from 'firebase/app';
+import { AngularFireAuth } from '@angular/fire/auth';
+import { AngularFirestore, AngularFirestoreDocument } from '@angular/fire/firestore';
+
+import { Observable, of } from 'rxjs';
+import { switchMap } from 'rxjs/operators';
+
+interface User {
+  uid: string;
+  email: string;
+  photoURL?: string;
+  displayName?: string;
+  favoriteColor?: string;
+}
+
+
+@Injectable({ providedIn: 'root' })
 export class AuthService {
 
-  constructor() { }
+  user: Observable<User>;
+
+  constructor(private firebaseAuthentication: AngularFireAuth, private firestore: AngularFirestore, private router: Router) {
+    //// Get auth data, then get firestore user document || null
+    this.user = this.firebaseAuthentication.authState.pipe(
+      switchMap(user => {
+        if (user) {
+          return this.firestore.doc<User>(`users/${user.uid}`).valueChanges();
+        } else {
+          return of(null);
+        }
+      })
+    );
+  }
+
+  googleLogin() {
+    const provider = new auth.GoogleAuthProvider();
+    return this.oAuthLogin(provider);
+  }
+
+  private oAuthLogin(provider) {
+    return this.firebaseAuthentication.auth.signInWithPopup(provider)
+      .then((credential) => {
+        this.updateUserData(credential.user);
+      });
+  }
+
+
+  private updateUserData(user) {
+    // Sets user data to firestore on login
+
+    const userRef: AngularFirestoreDocument<any> = this.firestore.doc(`users/${user.uid}`);
+
+    const data: User = {
+      uid: user.uid,
+      email: user.email,
+      displayName: user.displayName,
+      photoURL: user.photoURL
+    };
+
+    return userRef.set(data, { merge: true });
+  }
+
+
+  signOut() {
+    this.firebaseAuthentication.auth.signOut().then(() => {
+      this.router.navigate(['/']);
+    });
+  }
 }
