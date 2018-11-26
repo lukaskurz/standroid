@@ -8,6 +8,7 @@ import { LoginComponent } from './login/login.component';
 import { RegisterComponent } from './register/register.component';
 import { AngularFireModule } from "@angular/fire";
 import { environment } from '../environments/environment';
+import { CoreModule } from './core/core.module';
 
 @NgModule({
   declarations: [
@@ -19,7 +20,8 @@ import { environment } from '../environments/environment';
   imports: [
     BrowserModule,
     AppRoutingModule,
-    AngularFireModule.initializeApp(environment.firebase, "standup-sgt-web")
+    AngularFireModule.initializeApp(environment.firebase, "standup-sgt-web"),
+    CoreModule
   ],
   providers: [],
   bootstrap: [AppComponent]
