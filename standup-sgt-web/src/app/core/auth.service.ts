@@ -14,6 +14,7 @@ interface User {
   photoURL?: string;
   displayName?: string;
   favoriteColor?: string;
+  verified: boolean;
 }
 
 
@@ -58,14 +59,15 @@ export class AuthService {
   }
 
 
-  private updateUserData(user) {
+  private updateUserData(user: firebase.User) {
     const userRef: AngularFirestoreDocument<any> = this.firestore.doc(`users/${user.uid}`);
 
     const data: User = {
       uid: user.uid,
       email: user.email,
       displayName: user.displayName,
-      photoURL: user.photoURL
+      photoURL: user.photoURL,
+      verified: user.emailVerified
     };
 
     return userRef.set(data, { merge: true });
