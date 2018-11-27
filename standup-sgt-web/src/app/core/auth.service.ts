@@ -5,18 +5,8 @@ import { auth } from 'firebase/app';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { AngularFirestore, AngularFirestoreDocument } from '@angular/fire/firestore';
 
-import { Observable, of } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
-
-interface User {
-  uid: string;
-  email: string;
-  photoURL?: string;
-  displayName?: string;
-  favoriteColor?: string;
-  verified: boolean;
-}
-
+import { Observable } from 'rxjs';
+import { LoginError } from '../util/login-error';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
@@ -29,6 +19,14 @@ export class AuthService {
 
   emailAndPasswordLogin(email: string, password: string) {
     return this.firebaseAuthentication.auth.signInWithEmailAndPassword(email, password)
+      .then(credentials => {
+        if (!!credentials && credentials.user.emailVerified === true) {
+          return Promise.resolve(credentials);
+        } else {
+          const error: LoginError = { code: "auth/not-verified", message: "The email has not been verified." };
+          return Promise.reject(error);
+        }
+      });
   }
 
   googleLogin() {

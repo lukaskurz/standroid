@@ -9,21 +9,25 @@ import { RegisterComponent } from './register/register.component';
 import { AngularFireModule } from "@angular/fire";
 import { environment } from '../environments/environment';
 import { CoreModule } from './core/core.module';
+import { EmailVerificationComponent } from './email-verification/email-verification.component';
 
 @NgModule({
-  declarations: [
-    AppComponent,
-    DashboardComponent,
-    LoginComponent,
-    RegisterComponent
-  ],
-  imports: [
-    BrowserModule,
-    AppRoutingModule,
-    AngularFireModule.initializeApp(environment.firebase, "standup-sgt-web"),
-    CoreModule
-  ],
-  providers: [],
-  bootstrap: [AppComponent]
+   declarations: [
+      AppComponent,
+      DashboardComponent,
+      LoginComponent,
+      RegisterComponent,
+      EmailVerificationComponent
+   ],
+   imports: [
+      BrowserModule,
+      AppRoutingModule,
+      AngularFireModule.initializeApp(environment.firebase, "standup-sgt-web"),
+      CoreModule
+   ],
+   providers: [],
+   bootstrap: [
+      AppComponent
+   ]
 })
 export class AppModule { }
