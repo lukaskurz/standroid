@@ -9,15 +9,13 @@ import { RegisterComponent } from './register/register.component';
 import { AngularFireModule } from "@angular/fire";
 import { environment } from '../environments/environment';
 import { CoreModule } from './core/core.module';
-import { UserProfileComponent } from './user-profile/user-profile.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     DashboardComponent,
     LoginComponent,
-    RegisterComponent,
-    UserProfileComponent
+    RegisterComponent
   ],
   imports: [
     BrowserModule,
