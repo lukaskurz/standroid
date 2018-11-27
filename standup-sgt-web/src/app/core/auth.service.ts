@@ -48,22 +48,6 @@ export class AuthService {
     return this.firebaseAuthentication.auth.signInWithPopup(provider);
   }
 
-
-  private updateUserData(user: firebase.User) {
-    const userRef: AngularFirestoreDocument<any> = this.firestore.doc(`users/${user.uid}`);
-
-    const data: User = {
-      uid: user.uid,
-      email: user.email,
-      displayName: user.displayName,
-      photoURL: user.photoURL,
-      verified: user.emailVerified
-    };
-
-    return userRef.set(data, { merge: true });
-  }
-
-
   signOut() {
     this.firebaseAuthentication.auth.signOut().then(() => {
       this.router.navigate(['/']);
@@ -71,8 +55,8 @@ export class AuthService {
   }
 
   register(email: string, password: string) {
-    return this.firebaseAuthentication.auth.createUserWithEmailAndPassword(email, password).then((cred) => {
-      this.updateUserData(cred.user);
+    return this.firebaseAuthentication.auth.createUserWithEmailAndPassword(email, password).then((credentials) => {
+      credentials.user.sendEmailVerification();
     });
   }
 }
