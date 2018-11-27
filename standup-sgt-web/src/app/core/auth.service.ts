@@ -21,19 +21,14 @@ interface User {
 @Injectable({ providedIn: 'root' })
 export class AuthService {
 
-  public user: Observable<User>;
+  public user: Observable<firebase.User>;
 
   constructor(private firebaseAuthentication: AngularFireAuth, private firestore: AngularFirestore, private router: Router) {
-    //// Get auth data, then get firestore user document || null
-    this.user = this.firebaseAuthentication.authState.pipe(
-      switchMap(user => {
-        if (user) {
-          return this.firestore.doc<User>(`users/${user.uid}`).valueChanges();
-        } else {
-          return of(null);
-        }
-      })
-    );
+    this.user = this.firebaseAuthentication.authState;
+  }
+
+  emailAndPasswordLogin(email: string, password: string) {
+    return this.firebaseAuthentication.auth.signInWithEmailAndPassword(email, password)
   }
 
   googleLogin() {
@@ -52,10 +47,7 @@ export class AuthService {
   }
 
   private oAuthLogin(provider) {
-    return this.firebaseAuthentication.auth.signInWithPopup(provider)
-      .then((credential) => {
-        this.updateUserData(credential.user);
-      });
+    return this.firebaseAuthentication.auth.signInWithPopup(provider);
   }
 
 
