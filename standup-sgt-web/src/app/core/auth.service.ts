@@ -40,6 +40,16 @@ export class AuthService {
     return this.oAuthLogin(provider);
   }
 
+  twitterLogin() {
+    const provider = new auth.TwitterAuthProvider();
+    return this.oAuthLogin(provider);
+  }
+
+  facebookLogin() {
+    const provider = new auth.FacebookAuthProvider();
+    return this.oAuthLogin(provider);
+  }
+
   private oAuthLogin(provider) {
     return this.firebaseAuthentication.auth.signInWithPopup(provider)
       .then((credential) => {
@@ -49,8 +59,6 @@ export class AuthService {
 
 
   private updateUserData(user) {
-    // Sets user data to firestore on login
-
     const userRef: AngularFirestoreDocument<any> = this.firestore.doc(`users/${user.uid}`);
 
     const data: User = {
@@ -67,6 +75,12 @@ export class AuthService {
   signOut() {
     this.firebaseAuthentication.auth.signOut().then(() => {
       this.router.navigate(['/']);
+    });
+  }
+
+  register(email: string, password: string) {
+    return this.firebaseAuthentication.auth.createUserWithEmailAndPassword(email, password).then((cred) => {
+      this.updateUserData(cred.user);
     });
   }
 }
