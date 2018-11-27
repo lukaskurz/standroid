@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 
 import { auth } from 'firebase/app';
 import { AngularFireAuth } from '@angular/fire/auth';
-import { AngularFirestore, AngularFirestoreDocument } from '@angular/fire/firestore';
+import { AngularFirestore } from '@angular/fire/firestore';
 
 import { Observable } from 'rxjs';
 import { LoginError } from '../util/login-error';
@@ -15,6 +15,10 @@ export class AuthService {
 
   constructor(private firebaseAuthentication: AngularFireAuth, private firestore: AngularFirestore, private router: Router) {
     this.user = this.firebaseAuthentication.authState;
+  }
+
+  updateOnConnect(): any {
+    throw new Error("Method not implemented.");
   }
 
   emailAndPasswordLogin(email: string, password: string) {
