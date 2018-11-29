@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../core/auth.service';
+import { first } from 'rxjs/operators';
 
 @Component({
   selector: 'app-email-verification',
@@ -13,6 +14,17 @@ export class EmailVerificationComponent implements OnInit {
     auth.user.subscribe(user => {
       if (!!user && user.emailVerified === true) {
         this.redirectToLogin();
+      } else {
+        const userReload = setInterval(() => {
+          auth.user.pipe(first()).subscribe(u => {
+            user.reload();
+            console.log(u.emailVerified);
+            if (u.emailVerified === true) {
+              clearInterval(userReload);
+              this.redirectToLogin();
+            }
+          });
+        }, 3000);
       }
     });
   }
