@@ -1,17 +1,56 @@
 @import "../../theme.scss";
-.alert-app-level,
-.alert-app-level.alert-info {
-    background-color: $light-green;
+.alert-app-level{
+    background: url("../../assets/img/camouflage.png");
+    background-size: 300px;
+    .alert-text{
+        color:white;
+        font-weight: 700;
+    }
+    .alert-icon-wrapper .alert-icon{
+        color:white;
+    }
+    .alert-actions > .btn {
+    color:white!important;
+    border-color:white!important;
 }
+}
+
 
 .header {
     background-color: $dark-green;
 }
 
 .subnav {
-    background-color: $dark-brown;
+    background-color: $green;
 }
 
 .content-container {
-    background-color: $light-brown;
+    background-color: $dark-grey;
+}
+
+$branding-img-width: 36px;
+.branding img{
+    width: $branding-img-width;
+    height: $branding-img-width;
+    margin: 0 12px;
+}
+
+#search_input{
+    border-color:$neon-green;
+}
+
+/deep/ .dropdown.open>.dropdown-menu{
+    background: rgba(0, 0, 0, .35) url("../../assets/img/camouflage.png");
+    background-blend-mode: darken;
+    background-size: 250px;
+}
+
+/deep/ .dropdown-menu a.dropdown-item{
+    color: white;
+    font-weight: 800;
+}
+
+/deep/ .dropdown-menu a.dropdown-item:hover{
+    background-color: rgba($color: $dark-green, $alpha: 0.2);
+    color: $light-grey;
 }
