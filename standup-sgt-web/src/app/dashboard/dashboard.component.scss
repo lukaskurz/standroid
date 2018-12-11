@@ -1,0 +1,17 @@
+@import "../../theme.scss";
+.alert-app-level,
+.alert-app-level.alert-info {
+    background-color: $light-green;
+}
+
+.header {
+    background-color: $dark-green;
+}
+
+.subnav {
+    background-color: $dark-brown;
+}
+
+.content-container {
+    background-color: $light-brown;
+}
