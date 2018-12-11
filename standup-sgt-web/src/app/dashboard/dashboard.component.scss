@@ -113,3 +113,15 @@ $branding-img-width-small: 36px;
     background-color: rgba($color: $dark-green, $alpha: 0.2);
     color: $light-grey;
 }
+
+.nav-item a{
+    color:white;
+}
+
+.nav-item a:hover{
+    box-shadow: 0 -3px 0 $dark-green inset;
+}
+
+.nav-item a.active{
+    box-shadow: 0 -3px 0 $dark-green inset;
+}
