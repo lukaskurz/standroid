@@ -6,7 +6,7 @@ import { first } from 'rxjs/operators';
 @Component({
   selector: 'app-email-verification',
   templateUrl: './email-verification.component.html',
-  styleUrls: ['./email-verification.component.styl']
+  styleUrls: ['./email-verification.component.scss']
 })
 export class EmailVerificationComponent implements OnInit {
 

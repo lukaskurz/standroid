@@ -10,7 +10,7 @@
       "prefix": "app",
       "schematics": {
         "@schematics/angular:component": {
-          "styleext": "styl"
+          "styleext": "scss"
         }
       },
       "architect": {
@@ -27,9 +27,9 @@
               "src/assets"
             ],
             "styles": [
-              "src/styles.styl",
+              "src/styles.scss",
               "node_modules/@clr/icons/clr-icons.min.css",
-              "node_modules/@clr/ui/clr-ui.min.css"
+              "node_modules/@clr/ui/clr-ui-dark.min.css"
             ],
             "scripts": [
               "node_modules/@webcomponents/custom-elements/custom-elements.min.js",
@@ -88,7 +88,7 @@
             "tsConfig": "src/tsconfig.spec.json",
             "karmaConfig": "src/karma.conf.js",
             "styles": [
-              "src/styles.styl"
+              "src/styles.scss"
             ],
             "scripts": [],
             "assets": [
