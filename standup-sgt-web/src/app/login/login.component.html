@@ -17,6 +17,7 @@
 				Invalid email or password
 			</div>
 			<button type="button" class="btn btn-primary" (click)="login(email.value, password.value)">Login</button>
+			<button type="button" class="btn btn-primary" (click)="loginWithGoogle()">Login with Google</button>
 			<a [routerLink]="['/register']" class="signup">Don't have a Standup Sergeant yet? Register now</a>
 		</div>
 	</div>
