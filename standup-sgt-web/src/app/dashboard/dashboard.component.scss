@@ -54,13 +54,25 @@ $branding-img-width-small: 36px;
         margin-right: 24px;
         animation: shake 0.7s;
         animation-iteration-count: infinite;
-
         position: relative;
         top: -5px;
     }
     .alert-actions>.btn {
         color: white !important;
         border-color: white !important;
+    }
+    button.closer {
+        background-color: transparent;
+        border: 0px;
+        cursor: pointer;
+    }
+    button.closer * {
+        fill: white !important;
+    }
+    /deep/ button.closer clr-icon {
+        height: 32px;
+        width: 32px;
+        fill: white;
     }
 }
 
