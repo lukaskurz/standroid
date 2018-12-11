@@ -16,7 +16,16 @@ export class RegisterComponent implements OnInit {
   ngOnInit() {
   }
 
-  register(email: string, password: string) {
+  register(email: string, password: string, repeatPassword: string) {
+    this.registerError = null;
+    if (!password || !repeatPassword) {
+      this.registerError = "Both passwords need to be entered.";
+      return;
+    }
+    if (password !== repeatPassword) {
+      this.registerError = "The passwords are not the same.";
+      return;
+    }
     this.auth.register(email, password)
       .then(() => {
         this.redirectToVerificationPage();
@@ -27,6 +36,7 @@ export class RegisterComponent implements OnInit {
   }
 
   registerWithGoogle() {
+    this.registerError = null;
     this.auth.googleLogin()
       .then(() => {
         this.redirectToLogin();
