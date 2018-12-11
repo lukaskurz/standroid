@@ -1,8 +1,23 @@
-<h1>Login</h1>
-<input #email type="email" placeholder="Email" />
-<input #password type="password" placeholder="Password" />
-<p *ngIf="loginError != ''">{{ loginError }}</p>
-<input type="button" value="Login" (click)="login(email.value, password.value)" />
-<input type="button" value="Login with Google" (click)="loginWithGoogle ()" />
-<br />
-<a [routerLink]="['/register']">Don't have an account?</a>
+<div class="login-wrapper">
+	<div class="login">
+		<section class="title">
+			<h3 class="welcome">Welcome to your</h3>
+			Standup Sergeant
+		</section>
+		<div class="login-group">
+			<input #email class="email" type="email" name="email" placeholder="Email" required>
+			<input #password class="password" type="password" name="password" placeholder="Password" required minlength="8">
+			<div class="checkbox">
+				<input type="checkbox" id="rememberme" name="rememberme">
+				<label for="rememberme">
+					Remember me
+				</label>
+			</div>
+			<div class="error" [class.active]="loginError">
+				Invalid email or password
+			</div>
+			<button type="button" class="btn btn-primary" (click)="login(email.value, password.value)">Login</button>
+			<a [routerLink]="['/register']" class="signup">Don't have a Standup Sergeant yet? Register now</a>
+		</div>
+	</div>
+</div>

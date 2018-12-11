@@ -12,6 +12,7 @@ import { CoreModule } from './core/core.module';
 import { EmailVerificationComponent } from './email-verification/email-verification.component';
 
 import { ClarityModule } from "@clr/angular";
+import { FormsModule } from '@angular/forms';
 
 @NgModule({
    declarations: [
@@ -24,6 +25,7 @@ import { ClarityModule } from "@clr/angular";
    imports: [
       ClarityModule,
       BrowserModule,
+      FormsModule,
       AppRoutingModule,
       AngularFireModule.initializeApp(environment.firebase, "standup-sgt-web"),
       CoreModule
