@@ -13,6 +13,7 @@
 				{{registerError}}
 			</div>
 			<button type="button" class="btn btn-primary" (click)="register(email.value, password.value, repeatpassword.value)">Register</button>
+			<button type="button" class="btn btn-primary" (click)="registerWithGoogle()">Register with Google</button>
 			<a [routerLink]="['/register']" class="signup">Already have a sergeant? Log in</a>
 		</div>
 	</div>

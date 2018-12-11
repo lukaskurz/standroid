@@ -21,6 +21,9 @@ export class LoginComponent implements OnInit {
   login(email: string, password: string) {
     this.auth.emailAndPasswordLogin(email, password)
       .then(credentials => {
+        if (!credentials.user.emailVerified) {
+          this.redirectToEmailVerification();
+        }
         this.redirectToSecurePage();
       })
       .catch((reason: LoginError) => {
