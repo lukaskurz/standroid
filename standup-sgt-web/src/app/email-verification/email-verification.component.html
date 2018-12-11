@@ -1,6 +1,16 @@
-<h1>Email verification</h1>
-<p>An email has been sent to your address.</p>
-<p>Please click the link inside it to verify, that this is your email address.</p>
-<p>After you have verified your address, you can log in.</p>
-<input type="button" value="Resend Email" (click)="resendEmail()"/>
-<input type="button" value="Go to Login" (click)="redirectToLogin()"/>
+<div class="login-wrapper">
+	<div class="login">
+		<section class="title">
+			<h3 class="welcome">Please complete your</h3>
+			Email verification
+			<h5>An email has been sent to your address. Please click the link inside it to verify, that this is your email
+				address. After you have verified your address, you can log in.</h5>
+		</section>
+		<div class="login-group">
+			<div class="btn-group btn-primary">
+				<input type="button" class="btn btn-primary" value="Resend Email" (click)="resendEmail()" />
+				<input type="button" class="btn btn-primary" value="Go to Login" (click)="redirectToLogin()" />
+			</div>
+		</div>
+	</div>
+</div>
