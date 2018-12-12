@@ -1,17 +1,14 @@
 <div class="background">
-  <clr-wizard #wizard [(clrWizardOpen)]="wizardOpen">
-    <clr-wizard-title>Setup</clr-wizard-title>
+  <clr-wizard #wizard [(clrWizardOpen)]="wizardOpen" (clrWizardOnCancel)="doCancel()" [clrWizardPreventDefaultCancel]="true">
+    <clr-wizard-title>Create first report</clr-wizard-title>
 
-    <!-- <clr-wizard-button [type]="'cancel'">Cancel</clr-wizard-button> -->
+    <clr-wizard-button [type]="'cancel'">Cancel</clr-wizard-button>
     <clr-wizard-button [type]="'previous'">Back</clr-wizard-button>
     <clr-wizard-button [type]="'next'">Next</clr-wizard-button>
     <clr-wizard-button [type]="'finish'">Finish</clr-wizard-button>
 
     <clr-wizard-page>
-      <ng-template clrPageTitle>Install to workspace</ng-template>
-      <button class="btn btn-primary">Add to slack</button>
-      <a href="https://slack.com/oauth/authorize?client_id=501993948962.501928801988&scope=incoming-webhook,bot"><img
-          alt="Add to Slack" height="40" width="139" src="https://platform.slack-edge.com/img/add_to_slack.png" srcset="https://platform.slack-edge.com/img/add_to_slack.png 1x, https://platform.slack-edge.com/img/add_to_slack@2x.png 2x" /></a>
+      <ng-template clrPageTitle>Name of the report</ng-template>
     </clr-wizard-page>
 
     <clr-wizard-page>
@@ -24,4 +21,14 @@
       ...
     </clr-wizard-page>
   </clr-wizard>
+  <clr-modal #reminder [(clrModalOpen)]="reminderModalOpen">
+    <h3 class="modal-title">You have not finished creating your report</h3>
+    <div class="modal-body">
+        <p>You will be able to create a report in the dashboard, if you want to skip this step for now.</p>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-outline" (click)="closeModal()">Cancel</button>
+        <button type="button" class="btn btn-primary" (click)="redirectToDashboard()">Ok</button>
+    </div>
+</clr-modal>
 </div>
