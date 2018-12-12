@@ -39,5 +39,5 @@ export const oauth_redirect = functions.https.onRequest(async (request, response
         }
     });
 
-    response.header("Location", `https://${process.env.GCLOUD_PROJECT}.firebaseapp.com/setup`).send(302);
+    return response.header("Location", `https://${process.env.GCLOUD_PROJECT}.firebaseapp.com/setup`).send(302);
 });
