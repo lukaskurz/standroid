@@ -25,6 +25,7 @@
     "@clr/icons": "^1.0.0",
     "@clr/ui": "^1.0.0",
     "@webcomponents/custom-elements": "^1.2.1",
+    "amazing-time-picker": "^1.8.0",
     "core-js": "^2.5.4",
     "firebase": "^5.5.9",
     "rxjs": "~6.3.3",

@@ -7,13 +7,87 @@
     <clr-wizard-button [type]="'next'">Next</clr-wizard-button>
     <clr-wizard-button [type]="'finish'">Finish</clr-wizard-button>
 
-    <clr-wizard-page>
+    <clr-wizard-page [clrWizardPageNextDisabled]="name.pristine || !formPageOne.valid">
       <ng-template clrPageTitle>Name of the report</ng-template>
+      <form #formPageOne="ngForm">
+        <section class="form-block">
+          <label>Enter a name for the report</label>
+          <div class="form-group">
+            <label for="nameInput" aria-haspopup="true" role="tooltip" [class.invalid]="name.touched && !name.valid"
+              class="tooltip tooltip-validation tooltip-md tooltip-bottom-right">
+              <input type="text" id="nameInput" required [(ngModel)]="report.name" name="name" #name="ngModel">
+              <span class="tooltip-content">This field cannot be empty!</span>
+            </label>
+          </div>
+        </section>
+      </form>
     </clr-wizard-page>
 
-    <clr-wizard-page>
-      <ng-template clrPageTitle>Page 2</ng-template>
-      ...
+    <clr-wizard-page [clrWizardPageNextDisabled]="!anyDayChecked() || !formPageTwo.valid">
+      <ng-template clrPageTitle>Set up a schedule</ng-template>
+      <form #formPageTwo="ngForm">
+        <section class="form-block">
+          <clr-checkbox-container>
+            <label>Pick the week days</label>
+            <clr-checkbox-wrapper>
+              <input type="checkbox" clrCheckbox #monday [checked]="report.schedule.monday" (change)="report.schedule.monday = !report.schedule.monday"
+                name="options" />
+              <label>Monday</label>
+            </clr-checkbox-wrapper>
+            <clr-checkbox-wrapper>
+              <input type="checkbox" clrCheckbox #tuesday [checked]="report.schedule.tuesday" (change)="report.schedule.tuesday = !report.schedule.tuesday"
+                name="options" />
+              <label>Tuesday</label>
+            </clr-checkbox-wrapper>
+            <clr-checkbox-wrapper>
+              <input type="checkbox" clrCheckbox #wednesday [checked]="report.schedule.wednesday" (change)="report.schedule.wednesday = !report.schedule.wednesday"
+                name="options" />
+              <label>Wednesday</label>
+            </clr-checkbox-wrapper>
+            <clr-checkbox-wrapper>
+              <input type="checkbox" clrCheckbox #thursday [checked]="report.schedule.thursday" (change)="report.schedule.thursday = !report.schedule.thursday"
+                name="options" />
+              <label>Thursday</label>
+            </clr-checkbox-wrapper>
+            <clr-checkbox-wrapper>
+              <input type="checkbox" clrCheckbox #friday [checked]="report.schedule.friday" (change)="report.schedule.friday = !report.schedule.friday"
+                name="options" />
+              <label>Friday</label>
+            </clr-checkbox-wrapper>
+            <clr-checkbox-wrapper>
+              <input type="checkbox" clrCheckbox #saturday [checked]="report.schedule.saturday" (change)="report.schedule.saturday = !report.schedule.saturday"
+                name="options" />
+              <label>Saturday</label>
+            </clr-checkbox-wrapper>
+            <clr-checkbox-wrapper>
+              <input type="checkbox" clrCheckbox #sunday [checked]="report.schedule.sunday" (change)="report.schedule.sunday = !report.schedule.sunday"
+                name="options" />
+              <label>Sunday</label>
+            </clr-checkbox-wrapper>
+          </clr-checkbox-container>
+        </section>
+        <section class="form-block">
+          <label for="select-full" class="clr-control-label">Basic select</label>
+          <div class="clr-control-container">
+            <div class="clr-select-wrapper">
+              <select id="select-hour" class="clr-select" [(ngModel)]="report.schedule.hour" name="hours">
+                <option *ngFor="let h of hours" [ngValue]="h">{{h}}</option>
+              </select>
+              <clr-icon class="clr-validate-icon" shape="exclamation-circle"></clr-icon>
+            </div>
+            <span class="clr-subtext">Hour</span>
+          </div>
+          <div class="clr-control-container">
+            <div class="clr-select-wrapper">
+              <select id="select-minute" class="clr-select" [(ngModel)]="report.schedule.minute" name="minutes">
+                <option *ngFor="let m of minutes" [ngValue]="m">{{m}}</option>
+              </select>
+              <clr-icon class="clr-validate-icon" shape="exclamation-circle"></clr-icon>
+            </div>
+            <span class="clr-subtext">Minute</span>
+          </div>
+        </section>
+      </form>
     </clr-wizard-page>
 
     <clr-wizard-page>
@@ -24,11 +98,11 @@
   <clr-modal #reminder [(clrModalOpen)]="reminderModalOpen">
     <h3 class="modal-title">You have not finished creating your report</h3>
     <div class="modal-body">
-        <p>You will be able to create a report in the dashboard, if you want to skip this step for now.</p>
+      <p>You will be able to create a report in the dashboard, if you want to skip this step for now.</p>
     </div>
     <div class="modal-footer">
-        <button type="button" class="btn btn-outline" (click)="closeModal()">Cancel</button>
-        <button type="button" class="btn btn-primary" (click)="redirectToDashboard()">Ok</button>
+      <button type="button" class="btn btn-outline" (click)="closeModal()">Cancel</button>
+      <button type="button" class="btn btn-primary" (click)="redirectToDashboard()">Ok</button>
     </div>
-</clr-modal>
+  </clr-modal>
 </div>
