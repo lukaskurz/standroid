@@ -7,6 +7,7 @@ import { AuthGuard } from './core/auth.guard';
 import { EmailVerificationComponent } from './email-verification/email-verification.component';
 import { SetupComponent } from './setup/setup.component';
 import { InstallComponent } from './install/install.component';
+import { FailureComponent } from "./install/failure/failure.component";
 
 const routes: Routes = [
   { path: "", redirectTo: "login", pathMatch: "full" },
@@ -14,7 +15,11 @@ const routes: Routes = [
   { path: "register", component: RegisterComponent },
   { path: "email-verification", component: EmailVerificationComponent },
   { path: "setup", component: SetupComponent, canActivate: [AuthGuard] },
-  { path: "install", component: InstallComponent, canActivate: [AuthGuard] },
+  {
+    path: "install", component: InstallComponent, canActivate: [AuthGuard], children: [
+      { path: "failure", component: FailureComponent, canActivate: [AuthGuard] }
+    ]
+  },
   { path: "dashboard", component: DashboardComponent, canActivate: [AuthGuard] },
 
 ];

@@ -19,6 +19,7 @@ import { CoreModule } from './core/core.module';
 import { EmailVerificationComponent } from './email-verification/email-verification.component';
 import { SetupComponent } from './setup/setup.component';
 import { InstallComponent } from './install/install.component';
+import { FailureComponent } from './install/failure/failure.component';
 
 @NgModule({
    declarations: [
@@ -28,7 +29,8 @@ import { InstallComponent } from './install/install.component';
       RegisterComponent,
       EmailVerificationComponent,
       SetupComponent,
-      InstallComponent
+      InstallComponent,
+      FailureComponent
    ],
    imports: [
       ClarityModule,
