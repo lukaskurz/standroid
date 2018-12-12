@@ -18,6 +18,7 @@ import { environment } from '../environments/environment';
 import { CoreModule } from './core/core.module';
 import { EmailVerificationComponent } from './email-verification/email-verification.component';
 import { SetupComponent } from './setup/setup.component';
+import { InstallComponent } from './install/install.component';
 
 @NgModule({
    declarations: [
@@ -26,7 +27,8 @@ import { SetupComponent } from './setup/setup.component';
       LoginComponent,
       RegisterComponent,
       EmailVerificationComponent,
-      SetupComponent
+      SetupComponent,
+      InstallComponent
    ],
    imports: [
       ClarityModule,
