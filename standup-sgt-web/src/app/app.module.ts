@@ -1,6 +1,13 @@
+// Angular
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 
+// Clarity
+import { ClarityModule } from "@clr/angular";
+
+// Application
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
@@ -10,9 +17,7 @@ import { AngularFireModule } from "@angular/fire";
 import { environment } from '../environments/environment';
 import { CoreModule } from './core/core.module';
 import { EmailVerificationComponent } from './email-verification/email-verification.component';
-
-import { ClarityModule } from "@clr/angular";
-import { FormsModule } from '@angular/forms';
+import { SetupComponent } from './setup/setup.component';
 
 @NgModule({
    declarations: [
@@ -20,11 +25,13 @@ import { FormsModule } from '@angular/forms';
       DashboardComponent,
       LoginComponent,
       RegisterComponent,
-      EmailVerificationComponent
+      EmailVerificationComponent,
+      SetupComponent
    ],
    imports: [
       ClarityModule,
       BrowserModule,
+      BrowserAnimationsModule,
       FormsModule,
       AppRoutingModule,
       AngularFireModule.initializeApp(environment.firebase, "standup-sgt-web"),

@@ -5,13 +5,16 @@ import { RegisterComponent } from './register/register.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { AuthGuard } from './core/auth.guard';
 import { EmailVerificationComponent } from './email-verification/email-verification.component';
+import { SetupComponent } from './setup/setup.component';
 
 const routes: Routes = [
   { path: "", redirectTo: "login", pathMatch: "full" },
   { path: "login", component: LoginComponent },
   { path: "register", component: RegisterComponent },
   { path: "email-verification", component: EmailVerificationComponent },
+  { path: "setup", component: SetupComponent, canActivate: [AuthGuard] },
   { path: "dashboard", component: DashboardComponent, canActivate: [AuthGuard] },
+
 ];
 
 @NgModule({
