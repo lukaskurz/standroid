@@ -2,6 +2,8 @@ import * as functions from 'firebase-functions';
 import * as rp from 'request-promise';
 import * as admin from "firebase-admin";
 
+admin.initializeApp();
+
 export const oauth_redirect = functions.https.onRequest(async (request, response) => {
     if (request.method !== "GET") {
         console.error(`Got unsupported ${request.method} request. Expected GET.`);
@@ -27,7 +29,7 @@ export const oauth_redirect = functions.https.onRequest(async (request, response
     const result = await rp(options);
     if (!result.ok) {
         console.error("The request was not ok: " + JSON.stringify(result));
-        return response.header("Location", `https://${process.env.GCLOUD_PROJECT}.firebaseapp.com`).send(302);
+        return response.header("Location", `https://${process.env.GCLOUD_PROJECT}.firebaseapp.com/install/failure`).send(302);
     }
 
     await admin.database().ref("installations").child(result.team_id).set({
