@@ -3,6 +3,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
+import { HttpClientModule } from '@angular/common/http';
 
 // Clarity
 import { ClarityModule } from "@clr/angular";
@@ -41,6 +42,7 @@ import { SuccessComponent } from './install/success/success.component';
       BrowserAnimationsModule,
       FormsModule,
       AppRoutingModule,
+      HttpClientModule,
       AngularFireModule.initializeApp(environment.firebase, "standup-sgt-web"),
       AngularFirestoreModule,
       CoreModule

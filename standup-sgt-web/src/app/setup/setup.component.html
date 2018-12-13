@@ -107,6 +107,15 @@
         </section>
       </form>
     </clr-wizard-page>
+
+    <clr-wizard-page>
+      <ng-template clrPageTitle>Assign participants</ng-template>
+      <section class="form-block">
+        <select clrSelect name="options">
+          <option *ngFor="let tm of teamMembers" (click)="selectTeamMember(tm.id)">{{tm.name}}</option>
+        </select>
+      </section>
+    </clr-wizard-page>
   </clr-wizard>
   <clr-modal #reminder [(clrModalOpen)]="reminderModalOpen">
     <h3 class="modal-title">You have not finished creating your report</h3>

@@ -42,7 +42,8 @@ export class InstallComponent implements OnInit {
   }
 
   authorizeSlack() {
-    const link = `https://slack.com/oauth/authorize?client_id=501993948962.501928801988&state=${this.user.uid}&scope=incoming-webhook,bot`;
+    // tslint:disable-next-line:max-line-length
+    const link = `https://slack.com/oauth/authorize?client_id=501993948962.501928801988&state=${this.user.uid}&scope=incoming-webhook,commands,bot,users:read`;
     const popup = window.open(link, "Slack Verification", "width=700,height=700");
   }
 

@@ -6,6 +6,7 @@ import { ClrWizard, ClrModal } from '@clr/angular';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { first } from 'rxjs/operators';
 import { sha512 } from 'js-sha512';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-setup',
@@ -47,13 +48,17 @@ export class SetupComponent {
   hours: number[] = [];
   minutes: number[] = [];
 
-  constructor(private router: Router, private afs: AngularFirestore, private auth: AuthService) {
+  teamMembers: any[] = [];
+
+  constructor(private router: Router, private afs: AngularFirestore, private auth: AuthService, private http: HttpClient) {
     for (let counter = 0; counter < 24; counter++) {
       this.hours.push(counter);
     }
     for (let counter = 0; counter < 60; counter++) {
       this.minutes.push(counter);
     }
+
+    this.getTeamMembers();
   }
 
   anyDayChecked() {
@@ -91,7 +96,27 @@ export class SetupComponent {
   }
 
   addQuestion() {
-    this.report.questions.push("Another question...");
+    this.report.questions.push("Another question");
+  }
+
+  getTeamMembers() {
+    this.auth.user.pipe(first()).toPromise().then(u => {
+      return this.afs.collection<{ team_id: string }>("installations", (ref) => {
+        return ref.where("creator_uid", "==", u.uid).limit(1);
+      }).get();
+    }).then(query => {
+      return query.pipe(first()).toPromise();
+    }).then(snap => {
+      const at = snap.docs[0].get("access_token");
+
+      return this.http.get(`https://slack.com/api/users.list?token=${at}`).pipe(first()).toPromise();
+    }).then((resp: { members: [] }) => {
+      this.teamMembers = resp.members;
+    });
+  }
+
+  selectTeamMember(id: string) {
+    alert(id);
   }
 
   saveReport() {
