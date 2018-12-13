@@ -14,6 +14,8 @@ export const oauth_redirect = functions.https.onRequest(async (request, response
         return response.status(401).send("Missing query attribute 'code'");
     }
 
+    const userid = request.query.state;
+
     const options = {
         uri: "https://slack.com/api/oauth.access",
         method: "GET",
@@ -34,6 +36,8 @@ export const oauth_redirect = functions.https.onRequest(async (request, response
 
     await admin.database().ref("installations").child(result.team_id).set({
         token: result.access_token,
+        creatorid: userid,
+        creator_slackid: result.user_id,
         team: result.team_id,
         webhook: {
             url: result.incoming_webhook.url,
@@ -41,5 +45,6 @@ export const oauth_redirect = functions.https.onRequest(async (request, response
         }
     });
 
-    return response.header("Location", `https://${process.env.GCLOUD_PROJECT}.firebaseapp.com/setup`).send(302);
+    return response.set("Content-Type","text/html").send("<script>window.close();</script>")
 });
+
