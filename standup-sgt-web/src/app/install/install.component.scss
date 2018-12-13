@@ -8,6 +8,59 @@ div.background {
     }
 }
 
+// Top button 
+/deep/ .modal-header button.close {
+    box-shadow: none !important;
+}
+
+// Sidenav
+/deep/ .modal-nav.clr-wizard-stepnav-wrapper {
+    background-color: $darkest-green !important;
+}
+
+/deep/ .clr-wizard .clr-wizard-stepnav-item.active .clr-wizard-stepnav-link {
+    background-color: $green !important;
+}
+
+/deep/ .btn.btn-link.clr-wizard-stepnav-link:hover {
+    color: $neon-green;
+}
+
+/deep/ .active .btn.btn-link.clr-wizard-stepnav-link:hover {
+    color: $light-green !important;
+}
+
+// Content
+/deep/ .modal-content {
+    background-color: $dark-green !important;
+}
+
+/deep/ .btn.btn-primary,
+/deep/ .btn.clr-wizard-btn.btn-primary.clr-wizard-btn--primary {
+    border-color: $neon-green !important;
+    background-color: $neon-green !important;
+    color: black;
+}
+
+/deep/ .btn.btn-primary:active,
+/deep/ .btn.clr-wizard-btn.btn-primary.clr-wizard-btn--primary:active {
+    box-shadow: none !important;
+}
+
+/deep/ .btn.btn-outline,
+/deep/ .btn.clr-wizard-btn.btn-outline.clr-wizard-btn--secondary {
+    border-color: $neon-green !important;
+    color: $neon-green !important;
+}
+
+/deep/ .btn.btn-outline:active,
+/deep/ .btn.clr-wizard-btn.btn-outline.clr-wizard-btn--secondary:active {
+    box-shadow: none !important;
+}
+
+/deep/ .btn.clr-wizard-btn.btn-link.clr-wizard-btn--tertiary {
+    color: $neon-green !important;
+}
 a.slack-link{
 	display:block;
 	margin-top: 20px;

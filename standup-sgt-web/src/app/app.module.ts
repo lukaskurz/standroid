@@ -20,6 +20,8 @@ import { EmailVerificationComponent } from './email-verification/email-verificat
 import { SetupComponent } from './setup/setup.component';
 import { InstallComponent } from './install/install.component';
 import { FailureComponent } from './install/failure/failure.component';
+import { AngularFirestoreModule } from '@angular/fire/firestore';
+import { SuccessComponent } from './install/success/success.component';
 
 @NgModule({
    declarations: [
@@ -30,7 +32,8 @@ import { FailureComponent } from './install/failure/failure.component';
       EmailVerificationComponent,
       SetupComponent,
       InstallComponent,
-      FailureComponent
+      FailureComponent,
+      SuccessComponent
    ],
    imports: [
       ClarityModule,
@@ -39,6 +42,7 @@ import { FailureComponent } from './install/failure/failure.component';
       FormsModule,
       AppRoutingModule,
       AngularFireModule.initializeApp(environment.firebase, "standup-sgt-web"),
+      AngularFirestoreModule,
       CoreModule
    ],
    providers: [],
