@@ -5,10 +5,10 @@
     <clr-wizard-button [type]="'cancel'">Cancel</clr-wizard-button>
     <clr-wizard-button [type]="'previous'">Back</clr-wizard-button>
     <clr-wizard-button [type]="'next'">Next</clr-wizard-button>
-    <clr-wizard-button [type]="'finish'">Finish</clr-wizard-button>
+    <clr-wizard-button [type]="'finish'" (click)="saveReport()">Finish</clr-wizard-button>
 
-    <clr-wizard-page [clrWizardPageNextDisabled]="name.pristine || !formPageOne.valid">
-      <ng-template clrPageTitle>Name of the report</ng-template>
+    <clr-wizard-page [clrWizardPageNextDisabled]="!formPageOne.valid">
+      <ng-template clrPageTitle>Name your report</ng-template>
       <form #formPageOne="ngForm">
         <section class="form-block">
           <label>Enter a name for the report</label>
@@ -27,8 +27,8 @@
       <ng-template clrPageTitle>Set up a schedule</ng-template>
       <form #formPageTwo="ngForm">
         <section class="form-block">
+          <label>Pick the week days</label>
           <clr-checkbox-container>
-            <label>Pick the week days</label>
             <clr-checkbox-wrapper>
               <input type="checkbox" clrCheckbox #monday [checked]="report.schedule.monday" (change)="report.schedule.monday = !report.schedule.monday"
                 name="options" />
@@ -67,7 +67,7 @@
           </clr-checkbox-container>
         </section>
         <section class="form-block">
-          <label for="select-full" class="clr-control-label">Basic select</label>
+          <label for="select-full" class="clr-control-label">Time of day</label>
           <div class="clr-control-container">
             <div class="clr-select-wrapper">
               <select id="select-hour" class="clr-select" [(ngModel)]="report.schedule.hour" name="hours">
@@ -91,8 +91,21 @@
     </clr-wizard-page>
 
     <clr-wizard-page>
-      <ng-template clrPageTitle>Page 3</ng-template>
-      ...
+      <ng-template clrPageTitle>Set up questions</ng-template>
+      <form #formPageOne="ngForm">
+        <section class="form-block">
+          <label>Enter the questions</label>
+          <div *ngFor="let q of report.questions" class="questions-wrapper">
+            <input clrInput placeholder="A question for the report" name="{{q}}" [(ngModel)]="q" />
+            <button type="button" class="btn btn-icon" (click)="deleteQuestion(q)">
+              <clr-icon shape="trash"></clr-icon>
+            </button>
+          </div>
+          <button class="btn btn-primary" (click)="addQuestion()">
+            <clr-icon shape="plus"></clr-icon> Add a question
+          </button>
+        </section>
+      </form>
     </clr-wizard-page>
   </clr-wizard>
   <clr-modal #reminder [(clrModalOpen)]="reminderModalOpen">

@@ -61,3 +61,26 @@ div.background {
 /deep/ .btn.clr-wizard-btn.btn-link.clr-wizard-btn--tertiary {
     color: $neon-green !important;
 }
+
+/deep/ .clr-input-wrapper input {
+    width: 400px;
+}
+
+/deep/ .questions-wrapper {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    height: 50px;
+    /deep/ .clr-form-control.ng-star-inserted {
+        margin: 0px;
+    }
+    /deep/ .btn.btn-icon {
+        margin: 0;
+        margin-left: 10px;
+        border-color: $neon-green !important;
+        color: $neon-green !important;
+    }
+    /deep/ .btn.btn-icon:active {
+        box-shadow: none !important;
+    }
+}

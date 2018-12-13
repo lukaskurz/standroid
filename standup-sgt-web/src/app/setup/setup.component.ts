@@ -3,6 +3,9 @@ import { User } from 'firebase';
 import { AuthService } from '../core/auth.service';
 import { Router } from '@angular/router';
 import { ClrWizard, ClrModal } from '@clr/angular';
+import { AngularFirestore } from '@angular/fire/firestore';
+import { first } from 'rxjs/operators';
+import { sha512 } from 'js-sha512';
 
 @Component({
   selector: 'app-setup',
@@ -18,7 +21,9 @@ export class SetupComponent {
   reminderModalOpen = false;
 
   report = {
-    name: "",
+    creator_uid: "",
+    team_id: "",
+    name: "Daily Standup",
     schedule: {
       monday: true,
       tuesday: true,
@@ -30,13 +35,19 @@ export class SetupComponent {
       time: null,
       hour: 9,
       minute: 30,
-    }
+    },
+    questions: [
+      "What did you do yesterday?",
+      "What do plan on doing today?",
+      "Did something hinder you with your work?",
+      "Something worth mentioning?"
+    ]
   };
 
   hours: number[] = [];
   minutes: number[] = [];
 
-  constructor(private router: Router) {
+  constructor(private router: Router, private afs: AngularFirestore, private auth: AuthService) {
     for (let counter = 0; counter < 24; counter++) {
       this.hours.push(counter);
     }
@@ -70,6 +81,36 @@ export class SetupComponent {
 
   redirectToDashboard() {
     this.router.navigateByUrl("dashboard");
+  }
+
+  deleteQuestion(q: string) {
+    const index = this.report.questions.indexOf(q);
+    if (index !== -1) {
+      this.report.questions.splice(index, 1);
+    }
+  }
+
+  addQuestion() {
+    this.report.questions.push("Another question...");
+  }
+
+  saveReport() {
+    this.auth.user.pipe(first()).toPromise().then(u => {
+      this.report.creator_uid = u.uid;
+
+      return this.afs.collection<{ team_id: string }>("installations", (ref) => {
+        return ref.where("creator_uid", "==", u.uid).limit(1);
+      }).get();
+    }).then(query => {
+      return query.pipe(first()).toPromise();
+    }).then(snap => {
+      this.report.team_id = snap.docs[0].get("team_id");
+
+      const salt = new Date().toUTCString();
+      this.afs.collection("reports").doc(sha512(this.report.creator_uid + salt)).set(this.report);
+    }).then(() => {
+      this.redirectToDashboard();
+    });
   }
 
 }
