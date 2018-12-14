@@ -42,7 +42,8 @@ export class SetupComponent {
       "What do plan on doing today?",
       "Did something hinder you with your work?",
       "Something worth mentioning?"
-    ]
+    ],
+    selectedMembers: []
   };
 
   hours: number[] = [];
@@ -112,11 +113,46 @@ export class SetupComponent {
       return this.http.get(`https://slack.com/api/users.list?token=${at}`).pipe(first()).toPromise();
     }).then((resp: { members: [] }) => {
       this.teamMembers = resp.members;
+      this.teamMembers.unshift({ id: "-1", name: "Select a name" });
     });
   }
 
   selectTeamMember(id: string) {
-    alert(id);
+    if (id === "-1") {
+      return;
+    }
+
+    let index = -1;
+    for (let i = 0; i < this.teamMembers.length; i++) {
+      if (this.teamMembers[i].id === id) {
+        index = i;
+        break;
+      }
+    }
+
+    if (index !== -1) {
+      const member = this.teamMembers.splice(index, 1);
+      this.report.selectedMembers.push(member[0]);
+    }
+  }
+
+  deselectTeamMember(id: string) {
+    if (id === "-1") {
+      return;
+    }
+
+    let index = -1;
+    for (let i = 0; i < this.report.selectedMembers.length; i++) {
+      if (this.report.selectedMembers[i].id === id) {
+        index = i;
+        break;
+      }
+    }
+
+    if (index !== -1) {
+      const member = this.report.selectedMembers.splice(index, 1);
+      this.teamMembers.push(member[0]);
+    }
   }
 
   saveReport() {
