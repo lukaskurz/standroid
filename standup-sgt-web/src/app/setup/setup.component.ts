@@ -7,6 +7,7 @@ import { AngularFirestore } from '@angular/fire/firestore';
 import { first } from 'rxjs/operators';
 import { sha512 } from 'js-sha512';
 import { HttpClient } from '@angular/common/http';
+import { Report } from '../models/report';
 
 @Component({
   selector: 'app-setup',
@@ -21,7 +22,7 @@ export class SetupComponent {
   @ViewChild("reminder") reminderModal: ClrModal;
   reminderModalOpen = false;
 
-  report = {
+  report: Report = {
     creator_uid: "",
     team_id: "",
     name: "Daily Standup",
@@ -33,7 +34,6 @@ export class SetupComponent {
       friday: true,
       saturday: false,
       sunday: false,
-      time: null,
       hour: 9,
       minute: 30,
     },
@@ -168,7 +168,7 @@ export class SetupComponent {
       this.report.team_id = snap.docs[0].get("team_id");
 
       const salt = new Date().toUTCString();
-      this.afs.collection("reports").doc(sha512(this.report.creator_uid + salt)).set(this.report);
+      this.afs.collection("reports").doc(this.report.name + "_" + sha512(salt)).set(this.report);
     }).then(() => {
       this.redirectToDashboard();
     });

@@ -1,0 +1,16 @@
+<div class="wrapper">
+  <div class="content-area">
+    ...
+  </div>
+  <nav class="sidenav">
+    <section class="nav-group collapsible" *ngFor="let r of reports">
+      <input id="tabexample1" type="checkbox">
+      <label for="tabexample1">{{r.name}}</label>
+      <ul class="nav-list">
+        <li><a [routerLink]="['participants']" class="nav-link">Participants</a></li>
+        <li><a [routerLink]="['schedule']" class="nav-link">Schedule</a></li>
+        <li><a [routerLink]="['questions']" class="nav-link">Questions</a></li>
+      </ul>
+    </section>
+  </nav>
+</div>

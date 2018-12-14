@@ -23,6 +23,7 @@ import { InstallComponent } from './install/install.component';
 import { FailureComponent } from './install/failure/failure.component';
 import { AngularFirestoreModule } from '@angular/fire/firestore';
 import { SuccessComponent } from './install/success/success.component';
+import { ReportComponent } from './dashboard/report/report.component';
 
 @NgModule({
    declarations: [
@@ -34,7 +35,8 @@ import { SuccessComponent } from './install/success/success.component';
       SetupComponent,
       InstallComponent,
       FailureComponent,
-      SuccessComponent
+      SuccessComponent,
+      ReportComponent
    ],
    imports: [
       ClarityModule,

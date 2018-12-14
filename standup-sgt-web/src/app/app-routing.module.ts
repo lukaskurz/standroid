@@ -9,6 +9,16 @@ import { SetupComponent } from './setup/setup.component';
 import { InstallComponent } from './install/install.component';
 import { FailureComponent } from "./install/failure/failure.component";
 import { SuccessComponent } from './install/success/success.component';
+import { ReportComponent } from './dashboard/report/report.component';
+
+const dashboardRoutes: Routes = [
+  { path: "report", component: ReportComponent }
+];
+
+const installRoutes: Routes = [
+  { path: "failure", component: FailureComponent, canActivate: [AuthGuard] },
+  { path: "success", component: SuccessComponent, canActivate: [AuthGuard] }
+];
 
 const routes: Routes = [
   { path: "", redirectTo: "login", pathMatch: "full" },
@@ -16,13 +26,8 @@ const routes: Routes = [
   { path: "register", component: RegisterComponent },
   { path: "email-verification", component: EmailVerificationComponent },
   { path: "setup", component: SetupComponent, canActivate: [AuthGuard] },
-  {
-    path: "install", component: InstallComponent, canActivate: [AuthGuard], children: [
-      { path: "failure", component: FailureComponent, canActivate: [AuthGuard] },
-      { path: "success", component: SuccessComponent, canActivate: [AuthGuard] }
-    ]
-  },
-  { path: "dashboard", component: DashboardComponent, canActivate: [AuthGuard] },
+  { path: "install", component: InstallComponent, canActivate: [AuthGuard], children: installRoutes },
+  { path: "dashboard", component: DashboardComponent, canActivate: [AuthGuard], children: dashboardRoutes },
 
 ];
 
