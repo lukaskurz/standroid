@@ -12,12 +12,13 @@ import { SuccessComponent } from './install/success/success.component';
 import { ReportComponent } from './dashboard/report/report.component';
 
 const dashboardRoutes: Routes = [
+  { path: "", redirectTo: "report", pathMatch: "full" },
   { path: "report", component: ReportComponent }
 ];
 
 const installRoutes: Routes = [
-  { path: "failure", component: FailureComponent, canActivate: [AuthGuard] },
-  { path: "success", component: SuccessComponent, canActivate: [AuthGuard] }
+  { path: "failure", component: FailureComponent },
+  { path: "success", component: SuccessComponent }
 ];
 
 const routes: Routes = [
@@ -26,9 +27,8 @@ const routes: Routes = [
   { path: "register", component: RegisterComponent },
   { path: "email-verification", component: EmailVerificationComponent },
   { path: "setup", component: SetupComponent, canActivate: [AuthGuard] },
-  { path: "install", component: InstallComponent, canActivate: [AuthGuard], children: installRoutes },
+  { path: "install", component: InstallComponent , children: installRoutes },
   { path: "dashboard", component: DashboardComponent, canActivate: [AuthGuard], children: dashboardRoutes },
-
 ];
 
 @NgModule({

@@ -12,7 +12,13 @@ export class LoginComponent implements OnInit {
 
   loginError: string;
 
-  constructor(public auth: AuthService, public router: Router) { }
+  constructor(public auth: AuthService, public router: Router) {
+    this.auth.user.subscribe(user => {
+      if (!!user) {
+        this.redirectToSecurePage();
+      }
+    });
+  }
 
   ngOnInit() {
   }
@@ -21,17 +27,10 @@ export class LoginComponent implements OnInit {
   login(email: string, password: string) {
     this.auth.emailAndPasswordLogin(email, password)
       .then(credentials => {
-        if (!credentials.user.emailVerified) {
-          this.redirectToEmailVerification();
-        }
         this.redirectToSecurePage();
       })
       .catch((reason: LoginError) => {
-        if (reason.code === "auth/not-verified") {
-          this.redirectToEmailVerification();
-        } else {
-          this.loginError = reason.message;
-        }
+        this.loginError = reason.message;
       });
   }
 
@@ -43,10 +42,6 @@ export class LoginComponent implements OnInit {
       .catch((reason: LoginError) => {
         this.loginError = reason.message;
       });
-  }
-
-  redirectToEmailVerification() {
-    this.router.navigateByUrl("email-verification");
   }
 
   redirectToSecurePage() {
