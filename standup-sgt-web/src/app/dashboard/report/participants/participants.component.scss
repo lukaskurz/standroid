@@ -1,0 +1,32 @@
+@import "../../../../theme.scss";
+
+h3{
+	padding-bottom: 24px;
+}
+
+.member-wrapper {
+    margin-top: 10px;
+    &:first-of-type {
+        margin-top: 0px;
+    }
+    img {
+        width: 24px;
+        height: 24px;
+        border-radius: 5px;
+    }
+    span {
+        margin-left: 5px;
+        min-width: 100px;
+		display: inline-block;
+    }
+    
+	/deep/ .btn.btn-icon {
+        margin: 0;
+        margin-left: 10px;
+        border-color: $neon-green !important;
+        color: $neon-green !important;
+    }
+    /deep/ .btn.btn-icon:active {
+        box-shadow: none !important;
+    }
+}

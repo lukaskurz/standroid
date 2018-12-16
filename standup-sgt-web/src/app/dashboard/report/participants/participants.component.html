@@ -1,0 +1,10 @@
+<h3>Participants in this report</h3>
+<ng-container *ngIf="storage.currentReport != null">
+  <div class="member-wrapper" *ngFor="let m of storage.currentReport.selectedMembers">
+    <img [src]="m.profile.image_48">
+    <span>{{m.name}}</span>
+    <button type="button" class="btn btn-icon" (click)="removeMember(m)">
+      <clr-icon shape="window-close"></clr-icon>
+    </button>
+  </div>
+</ng-container>

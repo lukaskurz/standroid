@@ -1,7 +1,19 @@
+@import "../../../theme.scss";
 .wrapper {
-    height:100%;
+    height: 100%;
     width: 100%;
     display: flex;
     flex: 1 1 auto;
     min-height: 1px;
+}
+
+.nav-list {
+    .nav-link {
+        color: white;
+        &:hover {
+            background: none!important;
+            font-weight: 600;
+            text-decoration: none;
+        }
+    }
 }

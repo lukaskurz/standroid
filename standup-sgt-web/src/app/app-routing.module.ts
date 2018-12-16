@@ -10,10 +10,16 @@ import { InstallComponent } from './install/install.component';
 import { FailureComponent } from "./install/failure/failure.component";
 import { SuccessComponent } from './install/success/success.component';
 import { ReportComponent } from './dashboard/report/report.component';
+import { ParticipantsComponent } from './dashboard/report/participants/participants.component';
+
+const reportRoutes: Routes = [
+  { path: "", redirectTo: "participants", pathMatch: "full" },
+  { path: "participants", component: ParticipantsComponent }
+];
 
 const dashboardRoutes: Routes = [
   { path: "", redirectTo: "report", pathMatch: "full" },
-  { path: "report", component: ReportComponent }
+  { path: "report", component: ReportComponent, children: reportRoutes }
 ];
 
 const installRoutes: Routes = [
@@ -27,7 +33,7 @@ const routes: Routes = [
   { path: "register", component: RegisterComponent },
   { path: "email-verification", component: EmailVerificationComponent },
   { path: "setup", component: SetupComponent, canActivate: [AuthGuard] },
-  { path: "install", component: InstallComponent , children: installRoutes },
+  { path: "install", component: InstallComponent, children: installRoutes },
   { path: "dashboard", component: DashboardComponent, canActivate: [AuthGuard], children: dashboardRoutes },
 ];
 

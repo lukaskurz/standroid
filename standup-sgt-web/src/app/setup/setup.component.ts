@@ -168,7 +168,7 @@ export class SetupComponent {
       this.report.team_id = snap.docs[0].get("team_id");
 
       const salt = new Date().toUTCString();
-      this.afs.collection("reports").doc(this.report.name + "_" + sha512(salt)).set(this.report);
+      this.afs.collection("reports").doc(this.report.name + "_" + this.report.creator_uid).set(this.report);
     }).then(() => {
       this.redirectToDashboard();
     });
