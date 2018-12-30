@@ -126,3 +126,7 @@ $branding-img-width-small: 36px;
     box-shadow: 0 -3px 0 $dark-green inset;
     font-weight: 600;
 }
+
+/deep/ .content-container .ng-star-inserted {
+    width: 100%!important;
+}

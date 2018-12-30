@@ -1,16 +1,22 @@
 <div class="wrapper">
   <div class="content-area">
-    <router-outlet></router-outlet>
+    <div class="clr-row">
+      <div class="clr-col-4">
+        <app-questions></app-questions>
+      </div>
+      <div class="clr-col-3">
+        <app-participants></app-participants>
+      </div>
+      <div class="clr-col-2">
+        <span>2</span>
+      </div>
+    </div>
   </div>
   <nav class="sidenav">
-    <section class="nav-group collapsible" *ngFor="let r of reports">
-      <input id="tabexample" type="checkbox">
-      <label for="tabexample">{{r.name}}</label>
-      <ul class="nav-list">
-        <li><a (click)="goToParticipants(r)" class="nav-link">Participants</a></li>
-        <li><a [routerLink]="['schedule']" class="nav-link">Schedule</a></li>
-        <li><a [routerLink]="['questions']" class="nav-link">Questions</a></li>
-      </ul>
+    <section class="sidenav-content" >
+      <a class="nav-link" *ngFor="let r of reports" (click)="setCurrentReport(r)">
+        {{r.name}}
+      </a>
     </section>
   </nav>
 </div>

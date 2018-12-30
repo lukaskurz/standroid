@@ -1,3 +1,31 @@
-<p>
-  questions works!
-</p>
+<div class="card">
+  <div class="card-header">
+    Questions
+  </div>
+  <div class="card-block">
+    <div class="card-text">
+      <ng-container *ngIf="storage.currentReport != null">
+        <div *ngFor="let q of storage.currentReport.questions; let i = index" class="questions-wrapper">
+          <input clrInput placeholder="A question for the report" name="{{q}}" [(ngModel)]="q" />
+          <button type="button" class="btn btn-icon" (click)="deleteQuestion(i)">
+            <clr-icon shape="trash"></clr-icon>
+          </button>
+        </div>
+      </ng-container>
+    </div>
+  </div>
+  <div class="card-footer">
+    <button class="btn btn-sm btn-link" (click)="openModal()">Add Question</button>
+  </div>
+</div>
+
+<clr-modal [(clrModalOpen)]="isModalOpen" [clrModalStaticBackdrop]="false">
+  <h3 class="modal-title">Add a participant</h3>
+  <div class="modal-body no-scroll">
+    <input clrInput placeholder="New question" name="input" [(ngModel)]="newQuestion" />
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-outline" (click)="isModalOpen = false">Cancel</button>
+    <button type="button" class="btn btn-primary" (click)="addQuestion()" [disabled]="!newQuestionValid()">Add</button>
+  </div>
+</clr-modal>

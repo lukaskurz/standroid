@@ -4,6 +4,9 @@ h3 {
 }
 
 .member-wrapper {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
     margin-top: 10px;
     &:first-of-type {
         margin-top: 0px;
@@ -12,17 +15,20 @@ h3 {
         width: 24px;
         height: 24px;
         border-radius: 5px;
+        flex-grow: 0;
     }
     span {
         margin-left: 5px;
         min-width: 100px;
         display: inline-block;
+        flex-grow: 1;
     }
     /deep/ .btn.btn-icon {
         margin: 0;
         margin-left: 10px;
         border-color: $neon-green !important;
         color: $neon-green !important;
+        flex-grow: 0;
     }
     /deep/ .btn.btn-icon:active {
         box-shadow: none !important;

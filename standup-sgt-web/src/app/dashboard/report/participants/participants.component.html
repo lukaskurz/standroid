@@ -1,26 +1,22 @@
-<div class="row">
-  <div class="col-lg-5 col-md-8 col-sm-12 col-xs-12">
-    <div class="card">
-      <div class="card-header">
-        Participants
-      </div>
-      <div class="card-block">
-        <div class="card-text">
-          <ng-container *ngIf="storage.currentReport != null">
-            <div class="member-wrapper" *ngFor="let m of storage.currentReport.selectedMembers">
-              <img [src]="m.profile.image_48">
-              <span>{{m.name}}</span>
-              <button type="button" class="btn btn-icon" (click)="removeMember(m)">
-                <clr-icon shape="window-close"></clr-icon>
-              </button>
-            </div>
-          </ng-container>
+<div class="card">
+  <div class="card-header">
+    Participants
+  </div>
+  <div class="card-block">
+    <div class="card-text">
+      <ng-container *ngIf="storage.currentReport != null">
+        <div class="member-wrapper" *ngFor="let m of storage.currentReport.selectedMembers">
+          <img [src]="m.profile.image_48">
+          <span>{{m.name}}</span>
+          <button type="button" class="btn btn-icon" (click)="removeMember(m)">
+            <clr-icon shape="window-close"></clr-icon>
+          </button>
         </div>
-      </div>
-      <div class="card-footer">
-        <button class="btn btn-sm btn-link" (click)="openModal()">Add Participant</button>
-      </div>
+      </ng-container>
     </div>
+  </div>
+  <div class="card-footer">
+    <button class="btn btn-sm btn-link" (click)="openModal()">Add Participant</button>
   </div>
 </div>
 
