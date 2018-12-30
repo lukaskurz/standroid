@@ -17,10 +17,6 @@ export class AuthService {
     this.user = this.firebaseAuthentication.authState;
   }
 
-  updateOnConnect(): any {
-    throw new Error("Method not implemented.");
-  }
-
   emailAndPasswordLogin(email: string, password: string) {
     return this.firebaseAuthentication.auth.signInWithEmailAndPassword(email, password)
       .then(credentials => {
@@ -35,16 +31,6 @@ export class AuthService {
 
   googleLogin() {
     const provider = new auth.GoogleAuthProvider();
-    return this.oAuthLogin(provider);
-  }
-
-  twitterLogin() {
-    const provider = new auth.TwitterAuthProvider();
-    return this.oAuthLogin(provider);
-  }
-
-  facebookLogin() {
-    const provider = new auth.FacebookAuthProvider();
     return this.oAuthLogin(provider);
   }
 

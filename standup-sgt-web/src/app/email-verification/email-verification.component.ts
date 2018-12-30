@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../core/auth.service';
 import { first } from 'rxjs/operators';
+import { User } from 'firebase';
 
 @Component({
   selector: 'app-email-verification',
@@ -10,20 +11,20 @@ import { first } from 'rxjs/operators';
 })
 export class EmailVerificationComponent implements OnInit {
 
+  unverfifiedUser: User;
+
   constructor(public router: Router, public auth: AuthService) {
     auth.user.subscribe(user => {
       if (!!user && user.emailVerified === true) {
         this.redirectToLogin();
       } else {
+        this.unverfifiedUser = user;
         const userReload = setInterval(() => {
-          auth.user.pipe(first()).subscribe(u => {
-            user.reload();
-            console.log(u.emailVerified);
-            if (u.emailVerified === true) {
-              clearInterval(userReload);
-              this.redirectToLogin();
-            }
-          });
+          this.unverfifiedUser.reload();
+          if (this.unverfifiedUser.emailVerified === true) {
+            clearInterval(userReload);
+            this.redirectToLogin();
+          }
         }, 3000);
       }
     });
