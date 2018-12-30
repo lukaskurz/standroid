@@ -25,6 +25,8 @@ import { AngularFirestoreModule } from '@angular/fire/firestore';
 import { SuccessComponent } from './install/success/success.component';
 import { ReportComponent } from './dashboard/report/report.component';
 import { ParticipantsComponent } from './dashboard/report/participants/participants.component';
+import { ScheduleComponent } from './dashboard/report/schedule/schedule.component';
+import { QuestionsComponent } from './dashboard/report/questions/questions.component';
 
 @NgModule({
    declarations: [
@@ -38,7 +40,9 @@ import { ParticipantsComponent } from './dashboard/report/participants/participa
       FailureComponent,
       SuccessComponent,
       ReportComponent,
-      ParticipantsComponent
+      ParticipantsComponent,
+      ScheduleComponent,
+      QuestionsComponent
    ],
    imports: [
       ClarityModule,

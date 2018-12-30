@@ -11,10 +11,14 @@ import { FailureComponent } from "./install/failure/failure.component";
 import { SuccessComponent } from './install/success/success.component';
 import { ReportComponent } from './dashboard/report/report.component';
 import { ParticipantsComponent } from './dashboard/report/participants/participants.component';
+import { ScheduleComponent } from './dashboard/report/schedule/schedule.component';
+import { QuestionsComponent } from './dashboard/report/questions/questions.component';
 
 const reportRoutes: Routes = [
   { path: "", redirectTo: "participants", pathMatch: "full" },
-  { path: "participants", component: ParticipantsComponent }
+  { path: "participants", component: ParticipantsComponent },
+  { path: "schedule", component: ScheduleComponent },
+  { path: "questions", component: QuestionsComponent }
 ];
 
 const dashboardRoutes: Routes = [
