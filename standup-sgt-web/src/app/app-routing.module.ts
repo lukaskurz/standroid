@@ -14,16 +14,9 @@ import { ParticipantsComponent } from './dashboard/report/participants/participa
 import { ScheduleComponent } from './dashboard/report/schedule/schedule.component';
 import { QuestionsComponent } from './dashboard/report/questions/questions.component';
 
-const reportRoutes: Routes = [
-  { path: "", redirectTo: "participants", pathMatch: "full" },
-  { path: "participants", component: ParticipantsComponent },
-  { path: "schedule", component: ScheduleComponent },
-  { path: "questions", component: QuestionsComponent }
-];
-
 const dashboardRoutes: Routes = [
   { path: "", redirectTo: "report", pathMatch: "full" },
-  { path: "report", component: ReportComponent, children: reportRoutes }
+  { path: "report", component: ReportComponent }
 ];
 
 const installRoutes: Routes = [

@@ -42,11 +42,19 @@ export class QuestionsComponent implements OnInit {
 
   addQuestion() {
     this.storage.currentReport.questions.push(this.newQuestion);
+    this.saveQuestions();
+    this.isModalOpen = false;
+  }
+
+  changeQuestion(index: number, value: string) {
+    this.storage.currentReport.questions[index] = value;
+  }
+
+  saveQuestions() {
     this.afs
       .collection("reports")
       .doc(`${this.storage.currentReport.name}_${this.storage.currentReport.creator_uid}`)
       .update({ questions: this.storage.currentReport.questions });
-    this.isModalOpen = false;
   }
 
   newQuestionValid() {

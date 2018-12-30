@@ -6,7 +6,7 @@
     <div class="card-text">
       <ng-container *ngIf="storage.currentReport != null">
         <div *ngFor="let q of storage.currentReport.questions; let i = index" class="questions-wrapper">
-          <input clrInput placeholder="A question for the report" name="{{q}}" [(ngModel)]="q" />
+          <input clrInput placeholder="A question for the report" name="{{q}}" [(ngModel)]="q" (change)="changeQuestion(i,$event.target.value)" />
           <button type="button" class="btn btn-icon" (click)="deleteQuestion(i)">
             <clr-icon shape="trash"></clr-icon>
           </button>
@@ -15,6 +15,7 @@
     </div>
   </div>
   <div class="card-footer">
+    <button class="btn btn-sm btn-link" (click)="saveQuestions()">Save Changes</button>
     <button class="btn btn-sm btn-link" (click)="openModal()">Add Question</button>
   </div>
 </div>

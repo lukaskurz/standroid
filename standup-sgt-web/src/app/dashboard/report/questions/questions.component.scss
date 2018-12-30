@@ -1,0 +1,38 @@
+@import "../../../../theme.scss";
+
+/deep/ .clr-input-wrapper input {
+    width: 400px;
+}
+
+/deep/ .questions-wrapper {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    height: 50px;
+    /deep/ .clr-form-control.ng-star-inserted {
+        margin: 0px;
+    }
+    /deep/ .btn.btn-icon {
+        margin: 0;
+        margin-left: 10px;
+        border-color: $neon-green !important;
+        color: $neon-green !important;
+    }
+    /deep/ .btn.btn-icon:active {
+        box-shadow: none !important;
+    }
+}
+
+/deep/ input:not([readonly]),
+/deep/ input:not([readonly]) {
+    background: linear-gradient(to bottom, transparent 95%, $neon-green 95%) no-repeat !important;
+    background-size: 0 100% !important;
+    border-bottom: 1px solid transparent !important;
+    transition: background-size .2s ease !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.5) !important;
+}
+
+/deep/ input:focus,
+/deep/ input:focus {
+    background-size: 100% 100% !important;
+}
