@@ -55,8 +55,8 @@ export class SetupComponent {
     for (let counter = 0; counter < 24; counter++) {
       this.hours.push(counter);
     }
-    for (let counter = 0; counter < 60; counter++) {
-      this.minutes.push(counter);
+    for (let counter = 0; counter < 60 / 5; counter++) {
+      this.minutes.push(counter * 5);
     }
 
     this.getTeamMembers();
