@@ -1,7 +1,6 @@
 @import "../../../../theme.scss";
-
-h3{
-	padding-bottom: 24px;
+h3 {
+    padding-bottom: 24px;
 }
 
 .member-wrapper {
@@ -17,10 +16,9 @@ h3{
     span {
         margin-left: 5px;
         min-width: 100px;
-		display: inline-block;
+        display: inline-block;
     }
-    
-	/deep/ .btn.btn-icon {
+    /deep/ .btn.btn-icon {
         margin: 0;
         margin-left: 10px;
         border-color: $neon-green !important;
@@ -28,5 +26,19 @@ h3{
     }
     /deep/ .btn.btn-icon:active {
         box-shadow: none !important;
+    }
+}
+
+/deep/ .modal-body.no-scroll {
+    height: 50px !important;
+}
+
+/deep/ .card {
+    background-color: $dark-green;
+    /deep/ .btn.btn-sm.btn-link {
+        color: $neon-green;
+    }
+    /deep/ .btn.btn-sm.btn-link:hover {
+        color: $light-green;
     }
 }

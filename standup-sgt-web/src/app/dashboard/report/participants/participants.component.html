@@ -1,10 +1,38 @@
-<h3>Participants in this report</h3>
-<ng-container *ngIf="storage.currentReport != null">
-  <div class="member-wrapper" *ngFor="let m of storage.currentReport.selectedMembers">
-    <img [src]="m.profile.image_48">
-    <span>{{m.name}}</span>
-    <button type="button" class="btn btn-icon" (click)="removeMember(m)">
-      <clr-icon shape="window-close"></clr-icon>
-    </button>
+<div class="row">
+  <div class="col-lg-5 col-md-8 col-sm-12 col-xs-12">
+    <div class="card">
+      <div class="card-header">
+        Participants
+      </div>
+      <div class="card-block">
+        <div class="card-text">
+          <ng-container *ngIf="storage.currentReport != null">
+            <div class="member-wrapper" *ngFor="let m of storage.currentReport.selectedMembers">
+              <img [src]="m.profile.image_48">
+              <span>{{m.name}}</span>
+              <button type="button" class="btn btn-icon" (click)="removeMember(m)">
+                <clr-icon shape="window-close"></clr-icon>
+              </button>
+            </div>
+          </ng-container>
+        </div>
+      </div>
+      <div class="card-footer">
+        <button class="btn btn-sm btn-link" (click)="openModal()">Add Participant</button>
+      </div>
+    </div>
   </div>
-</ng-container>
+</div>
+
+<clr-modal [(clrModalOpen)]="isModalOpen" [clrModalStaticBackdrop]="false">
+  <h3 class="modal-title">Add a participant</h3>
+  <div class="modal-body no-scroll">
+    <select clrSelect [(ngModel)]="newTeamMember">
+      <option *ngFor="let tm of teamMembers" [ngValue]="tm">{{tm.name}}</option>
+    </select>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-outline" (click)="isModalOpen = false">Cancel</button>
+    <button type="button" class="btn btn-primary" (click)="addTeamMember()" [disabled]="!selectedMemberValid()">Add</button>
+  </div>
+</clr-modal>
