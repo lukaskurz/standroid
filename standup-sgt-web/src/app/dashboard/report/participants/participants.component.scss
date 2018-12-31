@@ -8,7 +8,7 @@ h3 {
     flex-direction: row;
     align-items: center;
     margin-top: 10px;
-    color:white;
+    color: white;
     &:first-of-type {
         margin-top: 0px;
     }
@@ -42,10 +42,38 @@ h3 {
 
 /deep/ .card {
     background-color: $dark-green;
-    /deep/ .btn.btn-sm.btn-link {
+    /deep/ .btn.btn-link {
         color: $neon-green;
     }
     /deep/ .btn.btn-sm.btn-link:hover {
         color: $light-green;
+    }
+}
+
+// Modal
+/deep/ div.modal-content {
+    background-color: $dark-green !important;
+}
+
+/deep/ div.modal-header button.close {
+    // text-align: end!important;
+    width: auto !important;
+}
+
+/deep/ div.modal-footer {
+    /deep/ .btn.btn-outline {
+        color: $neon-green;
+        border-color: $neon-green;
+        &:active {
+            box-shadow: none !important;
+        }
+    }
+    /deep/ .btn.btn-primary {
+        color: $dark-green;
+        border-color: $neon-green;
+        background-color: $neon-green;
+        &:active {
+            box-shadow: none !important;
+        }
     }
 }
