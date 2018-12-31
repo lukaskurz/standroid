@@ -76,11 +76,8 @@ export class CreationWizardComponent {
   }
 
   doCancel() {
-    this.reminderModal.open();
-  }
-
-  closeModal() {
-    this.reminderModal.close();
+    this.wizardOpen = false;
+    this.resetWizard();
   }
 
   deleteQuestion(q: string) {
@@ -166,7 +163,37 @@ export class CreationWizardComponent {
       this.afs.collection("reports").doc(this.report.uid).set(this.report);
     }).then(() => {
       this.wizardOpen = false;
+      this.resetWizard();
     });
+  }
+
+  resetWizard() {
+    this.report = {
+      uid: "",
+      creator_uid: "",
+      team_id: "",
+      name: "Daily Standup",
+      schedule: {
+        monday: true,
+        tuesday: true,
+        wednesday: true,
+        thursday: true,
+        friday: true,
+        saturday: false,
+        sunday: false,
+        hour: 9,
+        minute: 30,
+      },
+      questions: [
+        "What did you do yesterday?",
+        "What do plan on doing today?",
+        "Did something hinder you with your work?",
+        "Something worth mentioning?"
+      ],
+      selectedMembers: []
+    };
+
+    this.wizard.reset();
   }
 
 }
