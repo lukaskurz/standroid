@@ -39,6 +39,10 @@ export class ReportComponent implements OnInit {
     this.router.navigateByUrl("/dashboard/report/participants");
   }
 
+  isActive(report: Report) {
+    return this.storage.currentReport != null && report.uid === this.storage.currentReport.uid;
+  }
+
   ngOnInit() {
   }
 

@@ -16,7 +16,7 @@
   </div>
   <nav class="sidenav">
     <section class="sidenav-content" >
-      <a class="nav-link" *ngFor="let r of reports" (click)="setCurrentReport(r)">
+      <a class="nav-link" *ngFor="let r of reports" (click)="setCurrentReport(r)" [class.active]="isActive(r)">
         {{r.name}}
       </a>
     </section>

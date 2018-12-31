@@ -11,9 +11,20 @@
     .nav-link {
         color: white;
         &:hover {
-            background: none!important;
+            background: none !important;
             font-weight: 600;
             text-decoration: none;
         }
+    }
+}
+
+/deep/ .sidenav .sidenav-content a.nav-link {
+    background-color: $dark-green;
+    color: white;
+
+    &:hover,
+    &.active {
+        background-color: $green;
+        color: white;
     }
 }
