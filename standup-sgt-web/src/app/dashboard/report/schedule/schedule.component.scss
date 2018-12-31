@@ -1,5 +1,9 @@
 @import "../../../../theme.scss";
 
+/deep/ p, /deep/ span, /deep/ label {
+    color: white!important;
+}
+
 /deep/ .clr-checkbox-wrapper input[type=checkbox]:checked+label::before {
     background: $green;
 }
