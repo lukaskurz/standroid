@@ -1,9 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { AngularFirestore, AngularFirestoreCollection } from '@angular/fire/firestore';
 import { Observable } from 'rxjs';
 import { Report } from '../../models/report';
 import { DashboardStorageService } from 'src/app/dashboard-storage.service';
 import { Router } from '@angular/router';
+import { CreationWizardComponent } from './creation-wizard/creation-wizard.component';
 
 @Component({
   selector: 'app-report',
@@ -11,6 +12,8 @@ import { Router } from '@angular/router';
   styleUrls: ['./report.component.scss']
 })
 export class ReportComponent implements OnInit {
+
+  @ViewChild("creationWizard") creationWizard: CreationWizardComponent;
 
   reportsDocs: Observable<Report[]>;
   reports: Report[] = [];
@@ -41,6 +44,10 @@ export class ReportComponent implements OnInit {
 
   isActive(report: Report) {
     return this.storage.currentReport != null && report.uid === this.storage.currentReport.uid;
+  }
+
+  openWizard() {
+    this.creationWizard.wizardOpen = true;
   }
 
   ngOnInit() {

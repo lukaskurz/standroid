@@ -27,6 +27,7 @@ import { ReportComponent } from './dashboard/report/report.component';
 import { ParticipantsComponent } from './dashboard/report/participants/participants.component';
 import { ScheduleComponent } from './dashboard/report/schedule/schedule.component';
 import { QuestionsComponent } from './dashboard/report/questions/questions.component';
+import { CreationWizardComponent } from './dashboard/report/creation-wizard/creation-wizard.component';
 
 @NgModule({
    declarations: [
@@ -42,7 +43,8 @@ import { QuestionsComponent } from './dashboard/report/questions/questions.compo
       ReportComponent,
       ParticipantsComponent,
       ScheduleComponent,
-      QuestionsComponent
+      QuestionsComponent,
+      CreationWizardComponent
    ],
    imports: [
       ClarityModule,

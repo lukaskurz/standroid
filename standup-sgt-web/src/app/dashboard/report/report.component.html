@@ -19,6 +19,10 @@
       <a class="nav-link" *ngFor="let r of reports" (click)="setCurrentReport(r)" [class.active]="isActive(r)">
         {{r.name}}
       </a>
+      <a class="nav-link" (click)="openWizard()">
+        <clr-icon shape="plus"></clr-icon> Add new report
+      </a>
     </section>
   </nav>
 </div>
+<app-creation-wizard #creationWizard></app-creation-wizard>
