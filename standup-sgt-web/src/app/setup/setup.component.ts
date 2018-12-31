@@ -23,6 +23,7 @@ export class SetupComponent {
   reminderModalOpen = false;
 
   report: Report = {
+    uid: "",
     creator_uid: "",
     team_id: "",
     name: "Daily Standup",
@@ -156,6 +157,8 @@ export class SetupComponent {
   }
 
   saveReport() {
+    this.report.uid = this.afs.createId();
+
     this.auth.user.pipe(first()).toPromise().then(u => {
       this.report.creator_uid = u.uid;
 
@@ -168,7 +171,7 @@ export class SetupComponent {
       this.report.team_id = snap.docs[0].get("team_id");
 
       const salt = new Date().toUTCString();
-      this.afs.collection("reports").add(this.report);
+      this.afs.collection("reports").doc(this.report.uid).set(this.report);
     }).then(() => {
       this.redirectToDashboard();
     });

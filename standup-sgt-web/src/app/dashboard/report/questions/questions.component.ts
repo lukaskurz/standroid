@@ -36,7 +36,7 @@ export class QuestionsComponent implements OnInit {
     this.storage.currentReport.questions.splice(index, 1);
     this.afs
       .collection("reports")
-      .doc(`${this.storage.currentReport.name}_${this.storage.currentReport.creator_uid}`)
+      .doc(this.storage.currentReport.uid)
       .update({ questions: this.storage.currentReport.questions });
   }
 
@@ -53,7 +53,7 @@ export class QuestionsComponent implements OnInit {
   saveQuestions() {
     this.afs
       .collection("reports")
-      .doc(`${this.storage.currentReport.name}_${this.storage.currentReport.creator_uid}`)
+      .doc(this.storage.currentReport.uid)
       .update({ questions: this.storage.currentReport.questions });
   }
 

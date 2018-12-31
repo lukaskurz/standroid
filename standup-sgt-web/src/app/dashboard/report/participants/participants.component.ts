@@ -70,7 +70,7 @@ export class ParticipantsComponent implements OnInit {
     this.storage.currentReport.selectedMembers.splice(index, 1);
     this.afs
       .collection("reports")
-      .doc(`${this.storage.currentReport.name}_${this.storage.currentReport.creator_uid}`)
+      .doc(this.storage.currentReport.uid)
       .update({ selectedMembers: this.storage.currentReport.selectedMembers });
     this.getTeamMembers();
   }
@@ -90,7 +90,7 @@ export class ParticipantsComponent implements OnInit {
     this.storage.currentReport.selectedMembers.push(this.newTeamMember);
     this.afs
       .collection("reports")
-      .doc(`${this.storage.currentReport.name}_${this.storage.currentReport.creator_uid}`)
+      .doc(this.storage.currentReport.uid)
       .update({ selectedMembers: this.storage.currentReport.selectedMembers });
     this.isModalOpen = false;
     this.getTeamMembers();

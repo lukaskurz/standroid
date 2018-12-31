@@ -41,7 +41,7 @@ export class ScheduleComponent implements OnInit {
   saveSchedule() {
     this.afs
       .collection("reports")
-      .doc(`${this.storage.currentReport.name}_${this.storage.currentReport.creator_uid}`)
+      .doc(this.storage.currentReport.uid)
       .update({ schedule: this.storage.currentReport.schedule });
   }
 

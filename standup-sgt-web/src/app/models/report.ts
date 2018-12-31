@@ -1,6 +1,7 @@
 import { Member } from './member';
 
 export class Report {
+    uid: string;
     creator_uid: string;
     team_id: string;
     name: string;
