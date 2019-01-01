@@ -1,8 +1,207 @@
 import * as functions from 'firebase-functions';
 import * as rp from 'request-promise';
 import * as admin from "firebase-admin";
+import { Schedule } from './schedule';
+import { Member } from './member';
+import { Standup } from './standup';
+import * as http from "http";
+import { Report } from './report';
+import { Installation } from './installation';
 
 admin.initializeApp();
+const db = admin.firestore();
+
+export const get_time = functions.https.onRequest(async (request, response) => {
+    return response.status(200).set("Accept", "application/json").send(JSON.stringify(convertToOtherTimezone(new Date(), 3600).toString()));
+});
+
+export const slack_event = functions.https.onRequest(async (request, response) => {
+    console.log(request.body);
+    const challenge = request.body.challenge;
+    return response.status(200).send(challenge);
+});
+
+export const send_standups = functions.https.onRequest(async (request, response) => {
+    const reportRefs = await db.collection("reports").get();
+    console.log(`Got ${reportRefs.size} reports.`);
+    const promises: Promise<void>[] = [];
+
+    reportRefs.forEach(ref => {
+        const report: Report = ref.data() as Report;
+        promises.push(handleReport(report));
+    });
+
+    await Promise.all(promises);
+
+    return response.status(200).send();
+});
+
+async function handleReport(report: Report) {
+    console.log(`Handling report ${report.uid}`);
+    const installation: Installation = (await db.collection("installations").doc(report.team_id).get()).data() as Installation;
+    console.log(`Retrieved installation data for team ${installation.team_id}`);
+    const dueMembers = await getDueMembers(report);
+    console.log(`Got ${dueMembers.length} due members`);
+
+    if (dueMembers.length <= 0) {
+        return;
+    }
+    const batch = db.batch();
+
+    for (const member of dueMembers) {
+        const standup = createStandup(member, report);
+        const standupRef = db.collection("standups").doc()
+
+        // standupRef.set({ uid: standupRef.id });
+        batch.set(standupRef, standup);
+        batch.update(standupRef, {uid: standupRef.id});
+    }
+
+    batch.commit();
+
+    const channelMap = await getDirectChannelIds(installation, dueMembers);
+
+    for (const member of dueMembers) {
+        sendSlackMessage(installation, channelMap[member.id], report.questions[0]);
+    }
+}
+
+async function getDueMembers(report: Report) {
+    const dueMembers: Member[] = [];
+
+    for (const member of report.selectedMembers) {
+        console.log(`member ${member.id} is due: ${isMemberDue(member, report.schedule)}`);
+        console.log(`member ${member.id} has standup: ${await isStandupCreated(member, report)}`);
+        if (isMemberDue(member, report.schedule) && !(await isStandupCreated(member, report))) {
+            dueMembers.push(member);
+        }
+    }
+
+    return dueMembers;
+}
+
+function isMemberDue(member: Member, schedule: Schedule) {
+    const memberTime = convertToOtherTimezone(new Date(), member.tz_offset);
+    const day = memberTime.toLocaleString("en-us", { weekday: "long" }).toLowerCase();
+
+    return schedule[day] === true &&
+        (
+            memberTime.getHours() > schedule.hour ||
+            (
+                memberTime.getHours() === schedule.hour &&
+                memberTime.getMinutes() >= schedule.minute
+            )
+        );
+}
+
+async function isStandupCreated(member: Member, report: Report) {
+    const memberTime = convertToOtherTimezone(new Date(), member.tz_offset);
+    const snapshot = await db.collection("standups")
+        .where("memberId", "==", member.id)
+        .where("reportUid", "==", report.uid)
+        .where("date", "==", memberTime.toDateString()).get();
+
+    return snapshot.size > 0;
+}
+
+
+/**
+ * 
+ * @param date current date
+ * @param offset in seconds
+ */
+function convertToOtherTimezone(date: Date, offset: number) {
+    const utc = date.getTime() + (date.getTimezoneOffset() * 60000);
+    const newDate = new Date(utc + offset * 1000);
+    return newDate;
+}
+
+function createStandup(member: Member, report: Report) {
+    const memberTime = convertToOtherTimezone(new Date(), member.tz_offset);
+
+    const standup: Standup = {
+        uid: "",
+        questions: report.questions,
+        answers: [],
+        date: memberTime.toDateString(),
+        finished: false,
+        memberId: member.id,
+        reportUid: report.uid
+    };
+
+    return standup;
+}
+
+interface ConversationsListResponse {
+    channels: Channel[]
+}
+
+interface Channel {
+    id: string;
+    user: string;
+}
+
+async function getDirectChannelIds(installation: Installation, dueMembers: Member[]) {
+    const options = {
+        uri: "https://slack.com/api/conversations.list",
+        method: "GET",
+        json: false,
+        qs: {
+            token: installation.bot.token,
+            types: "im"
+        }
+    };
+    console.log(`Requesting conversations.list for team ${installation.team_id}`);
+    const result: ConversationsListResponse = JSON.parse(await rp(options));
+    console.log(result);
+    const channelMap = new Object();
+
+    for (const member of dueMembers) {
+        const channel = result.channels.find(c => c.user === member.id);
+        if (channel === undefined) {
+            const dc = await openDirectChannel(installation, member);
+            channelMap[member.id] = dc.channel.id;
+        } else {
+            channelMap[member.id] = channel.id
+        }
+    }
+
+    return channelMap;
+}
+
+async function openDirectChannel(installation: Installation, member: Member) {
+    const options = {
+        uri: "https://slack.com/api/im.open",
+        method: "POST",
+        json: false,
+        qs: {
+            token: installation.bot.token,
+            user: member.id
+        }
+    };
+
+    console.log(`Requesting new instant messaging channel with member ${member.id}`);
+
+    const result = (await rp(options)) as { channel: { id: string } };
+    console.log(result);
+
+    return result;
+}
+
+function sendSlackMessage(installation: Installation, channelId: string, text: string) {
+    const options = {
+        uri: "https://slack.com/api/chat.postMessage",
+        method: "POST",
+        json: false,
+        qs: {
+            token: installation.bot.token,
+            channel: channelId,
+            text: text
+        }
+    };
+
+    return rp(options);
+}
 
 export const oauth_redirect = functions.https.onRequest(async (request, response) => {
     if (request.method !== "GET") {
@@ -34,6 +233,8 @@ export const oauth_redirect = functions.https.onRequest(async (request, response
         return response.header("Location", `https://${process.env.GCLOUD_PROJECT}.firebaseapp.com/install/failure`).send(302);
     }
 
+    console.log(result);
+
     await admin.firestore().collection("installations").doc(result.team_id).set({
         access_token: result.access_token,
         creator_uid: userid,
@@ -42,6 +243,11 @@ export const oauth_redirect = functions.https.onRequest(async (request, response
         webhook: {
             url: result.incoming_webhook.url,
             channel: result.incoming_webhook.channel_id
+        },
+        scope: result.scope,
+        bot: {
+            id: result.bot.bot_user_id,
+            token: result.bot.bot_access_token
         }
     });
 
