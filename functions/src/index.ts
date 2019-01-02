@@ -15,10 +15,44 @@ export const get_time = functions.https.onRequest(async (request, response) => {
     return response.status(200).set("Accept", "application/json").send(JSON.stringify(convertToOtherTimezone(new Date(), 3600).toString()));
 });
 
+interface SlackEvent {
+    team_id: string;
+    event: {
+        type: string,
+        subtype?: string,
+        text: string,
+        user: string,
+        channel: string
+    }
+}
+
 export const slack_event = functions.https.onRequest(async (request, response) => {
-    console.log(request.body);
-    const challenge = request.body.challenge;
-    return response.status(200).send(challenge);
+    console.log(`Got slack message from ${request.hostname} - ${request.host}`);
+    const body: SlackEvent = request.body;
+    console.log(`Message body: ${JSON.stringify(request.body)}`);
+
+    if(body.event.subtype !== undefined){
+        response.status(200).send();
+        return;
+    }
+    const installation: Installation = (await db.collection("installations").doc(body.team_id).get()).data() as Installation;
+    const standupRefs = await db.collection("standups")
+        .where("memberId", "==", body.event.user)
+        .where("finished", "==", false).get();
+
+    console.log(`Got ${standupRefs.size} standups matched to message`);
+    if (standupRefs.size > 0) {
+        const standup: Standup = standupRefs.docs[0].data() as Standup;
+        standup.answers.push(body.event.text);
+        if (standup.answers.length === standup.questions.length) {
+            standup.finished = true;
+        } else {
+            const question = standup.questions[standup.answers.length];
+            sendSlackMessage(installation, body.event.channel, question);
+        }
+
+        db.collection("standups").doc(standup.uid).set(standup);
+    }
 });
 
 export const send_standups = functions.https.onRequest(async (request, response) => {
@@ -54,7 +88,7 @@ async function handleReport(report: Report) {
 
         // standupRef.set({ uid: standupRef.id });
         batch.set(standupRef, standup);
-        batch.update(standupRef, {uid: standupRef.id});
+        batch.update(standupRef, { uid: standupRef.id });
     }
 
     batch.commit();
@@ -126,7 +160,7 @@ function createStandup(member: Member, report: Report) {
         date: memberTime.toDateString(),
         finished: false,
         memberId: member.id,
-        reportUid: report.uid
+        reportUid: report.uid,
     };
 
     return standup;
