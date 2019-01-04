@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { Report } from 'src/app/shared/models/report';
-import { DashboardStorageService } from 'src/app/dashboard-storage.service';
+import { DashboardStorageService } from 'src/app/core/services/dashboard-storage.service';
 import { Member } from 'src/app/shared/models/member';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { Router } from '@angular/router';
-import { AuthService } from 'src/app/core/auth.service';
+import { AuthService } from 'src/app/core/auth/auth.service';
 import { HttpClient } from '@angular/common/http';
 import { first } from 'rxjs/operators';
 import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';

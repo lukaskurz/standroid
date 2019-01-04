@@ -3,7 +3,7 @@ import { ClrWizard, ClrModal } from '@clr/angular';
 import { Report } from 'src/app/shared/models/report';
 import { Router } from '@angular/router';
 import { AngularFirestore } from '@angular/fire/firestore';
-import { AuthService } from 'src/app/core/auth.service';
+import { AuthService } from 'src/app/core/auth/auth.service';
 import { HttpClient } from '@angular/common/http';
 import { first } from 'rxjs/operators';
 

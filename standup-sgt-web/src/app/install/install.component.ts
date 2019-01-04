@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { ClrWizard } from '@clr/angular';
 import { User } from 'firebase';
 import { Router } from '@angular/router';
-import { AuthService } from '../core/auth.service';
+import { AuthService } from '../core/auth/auth.service';
 import { AngularFirestore, AngularFirestoreDocument, AngularFirestoreCollection } from '@angular/fire/firestore';
 import { Observable } from 'rxjs';
 import { first, take } from 'rxjs/operators';

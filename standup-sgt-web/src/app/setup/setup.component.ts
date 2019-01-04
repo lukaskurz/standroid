@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { User } from 'firebase';
-import { AuthService } from '../core/auth.service';
+import { AuthService } from '../core/auth/auth.service';
 import { Router } from '@angular/router';
 import { ClrWizard, ClrModal } from '@clr/angular';
 import { AngularFirestore } from '@angular/fire/firestore';
