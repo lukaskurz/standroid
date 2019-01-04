@@ -7,7 +7,7 @@ import { AngularFirestore } from '@angular/fire/firestore';
 import { first } from 'rxjs/operators';
 import { sha512 } from 'js-sha512';
 import { HttpClient } from '@angular/common/http';
-import { Report } from '../models/report';
+import { Report } from '../shared/models/report';
 
 @Component({
   selector: 'app-setup',

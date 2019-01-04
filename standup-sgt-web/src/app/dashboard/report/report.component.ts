@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { AngularFirestore, AngularFirestoreCollection } from '@angular/fire/firestore';
 import { Observable } from 'rxjs';
-import { Report } from '../../models/report';
+import { Report } from '../../shared/models/report';
 import { DashboardStorageService } from 'src/app/dashboard-storage.service';
 import { Router } from '@angular/router';
 import { CreationWizardComponent } from './creation-wizard/creation-wizard.component';

@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 import { AuthService } from './auth.service';
 import { tap, map, take } from 'rxjs/operators';
 import { AngularFirestore } from '@angular/fire/firestore';
-import { Report } from '../models/report';
+import { Report } from '../shared/models/report';
 
 @Injectable({
   providedIn: 'root'

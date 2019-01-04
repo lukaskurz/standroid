@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { ClrWizard, ClrModal } from '@clr/angular';
-import { Report } from 'src/app/models/report';
+import { Report } from 'src/app/shared/models/report';
 import { Router } from '@angular/router';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { AuthService } from 'src/app/core/auth.service';
