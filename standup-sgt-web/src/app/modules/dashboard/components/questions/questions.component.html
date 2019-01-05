@@ -4,8 +4,8 @@
   </div>
   <div class="card-block">
     <div class="card-text">
-      <ng-container *ngIf="storage.currentReport != null">
-        <div *ngFor="let q of storage.currentReport.questions; let i = index" class="questions-wrapper">
+      <ng-container>
+        <div *ngFor="let q of questions; let i = index" class="questions-wrapper">
           <input clrInput placeholder="A question for the report" name="{{q}}" [(ngModel)]="q" (change)="changeQuestion(i,$event.target.value)" />
           <button type="button" class="btn btn-icon" (click)="deleteQuestion(i)">
             <clr-icon shape="trash"></clr-icon>

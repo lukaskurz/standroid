@@ -4,42 +4,42 @@
   </div>
   <div class="card-block">
     <div class="card-text">
-      <ng-container *ngIf="storage.currentReport != null">
+      <ng-container *ngIf="schedule != null">
         <section class="form-block">
           <label>Pick the week days</label>
           <clr-checkbox-container>
             <clr-checkbox-wrapper>
-              <input type="checkbox" clrCheckbox #monday [checked]="storage.currentReport.schedule.monday" (change)="storage.currentReport.schedule.monday = !storage.currentReport.schedule.monday"
+              <input type="checkbox" clrCheckbox #monday [checked]="schedule.monday" (change)="schedule.monday = !schedule.monday"
                 name="options" />
               <label>Monday</label>
             </clr-checkbox-wrapper>
             <clr-checkbox-wrapper>
-              <input type="checkbox" clrCheckbox #tuesday [checked]="storage.currentReport.schedule.tuesday" (change)="storage.currentReport.schedule.tuesday = !storage.currentReport.schedule.tuesday"
+              <input type="checkbox" clrCheckbox #tuesday [checked]="schedule.tuesday" (change)="schedule.tuesday = !schedule.tuesday"
                 name="options" />
               <label>Tuesday</label>
             </clr-checkbox-wrapper>
             <clr-checkbox-wrapper>
-              <input type="checkbox" clrCheckbox #wednesday [checked]="storage.currentReport.schedule.wednesday" (change)="storage.currentReport.schedule.wednesday = !storage.currentReport.schedule.wednesday"
+              <input type="checkbox" clrCheckbox #wednesday [checked]="schedule.wednesday" (change)="schedule.wednesday = !schedule.wednesday"
                 name="options" />
               <label>Wednesday</label>
             </clr-checkbox-wrapper>
             <clr-checkbox-wrapper>
-              <input type="checkbox" clrCheckbox #thursday [checked]="storage.currentReport.schedule.thursday" (change)="storage.currentReport.schedule.thursday = !storage.currentReport.schedule.thursday"
+              <input type="checkbox" clrCheckbox #thursday [checked]="schedule.thursday" (change)="schedule.thursday = !schedule.thursday"
                 name="options" />
               <label>Thursday</label>
             </clr-checkbox-wrapper>
             <clr-checkbox-wrapper>
-              <input type="checkbox" clrCheckbox #friday [checked]="storage.currentReport.schedule.friday" (change)="storage.currentReport.schedule.friday = !storage.currentReport.schedule.friday"
+              <input type="checkbox" clrCheckbox #friday [checked]="schedule.friday" (change)="schedule.friday = !schedule.friday"
                 name="options" />
               <label>Friday</label>
             </clr-checkbox-wrapper>
             <clr-checkbox-wrapper>
-              <input type="checkbox" clrCheckbox #saturday [checked]="storage.currentReport.schedule.saturday" (change)="storage.currentReport.schedule.saturday = !storage.currentReport.schedule.saturday"
+              <input type="checkbox" clrCheckbox #saturday [checked]="schedule.saturday" (change)="schedule.saturday = !schedule.saturday"
                 name="options" />
               <label>Saturday</label>
             </clr-checkbox-wrapper>
             <clr-checkbox-wrapper>
-              <input type="checkbox" clrCheckbox #sunday [checked]="storage.currentReport.schedule.sunday" (change)="storage.currentReport.schedule.sunday = !storage.currentReport.schedule.sunday"
+              <input type="checkbox" clrCheckbox #sunday [checked]="schedule.sunday" (change)="schedule.sunday = !schedule.sunday"
                 name="options" />
               <label>Sunday</label>
             </clr-checkbox-wrapper>
@@ -49,7 +49,7 @@
           <label for="select-full" class="clr-control-label">Time of day</label>
           <div class="clr-control-container">
             <div class="clr-select-wrapper">
-              <select id="select-hour" class="clr-select" [(ngModel)]="storage.currentReport.schedule.hour" name="hours">
+              <select id="select-hour" class="clr-select" [(ngModel)]="schedule.hour" name="hours">
                 <option *ngFor="let h of hours" [ngValue]="h">{{h}}</option>
               </select>
             </div>
@@ -57,7 +57,7 @@
           </div>
           <div class="clr-control-container">
             <div class="clr-select-wrapper">
-              <select id="select-minute" class="clr-select" [(ngModel)]="storage.currentReport.schedule.minute" name="minutes">
+              <select id="select-minute" class="clr-select" [(ngModel)]="schedule.minute" name="minutes">
                 <option *ngFor="let m of minutes" [ngValue]="m">{{m}}</option>
               </select>
             </div>

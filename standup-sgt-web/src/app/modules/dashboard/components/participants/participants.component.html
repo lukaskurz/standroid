@@ -5,7 +5,7 @@
   <div class="card-block">
     <div class="card-text">
       <ng-container *ngIf="storage.currentReport != null">
-        <div class="member-wrapper" *ngFor="let m of storage.currentReport.selectedMembers">
+        <div class="member-wrapper" *ngFor="let m of members">
           <img [src]="m.profile.image_48">
           <span>{{m.name}}</span>
           <app-icon-button type="window-close" (click)="removeMember(m)"></app-icon-button>
@@ -14,6 +14,7 @@
     </div>
   </div>
   <div class="card-footer">
+    <app-link-button (click)="saveChanges()">Save Changes</app-link-button>
     <app-link-button (click)="openModal()">Add Participant</app-link-button>
   </div>
 </div>
@@ -22,6 +23,7 @@
   <h3 class="modal-title">Add a participant</h3>
   <div class="modal-body no-scroll">
     <select clrSelect [(ngModel)]="newTeamMember">
+      <option [ngValue]="null">Select a team member</option>
       <option *ngFor="let tm of teamMembers" [ngValue]="tm">{{tm.name}}</option>
     </select>
   </div>

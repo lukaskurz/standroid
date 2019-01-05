@@ -1,63 +1,43 @@
-import { Component, OnInit } from '@angular/core';
-import { DashboardStorageService } from 'src/app/core/services/dashboard-storage.service';
-import { AngularFirestore } from '@angular/fire/firestore';
-import { Router } from '@angular/router';
-import { AuthService } from 'src/app/core/auth/auth.service';
-import { HttpClient } from '@angular/common/http';
+import { Component, Input, Output, EventEmitter } from '@angular/core';
 
 @Component({
   selector: 'app-questions',
   templateUrl: './questions.component.html',
   styleUrls: ['./questions.component.scss']
 })
-export class QuestionsComponent implements OnInit {
+export class QuestionsComponent {
+
+  @Input() questions: string[] = [];
+  @Output() save = new EventEmitter();
 
   isModalOpen = false;
   newQuestion = "";
 
-  constructor(
-    public storage: DashboardStorageService,
-    private afs: AngularFirestore,
-    private router: Router,
-    private auth: AuthService,
-    private http: HttpClient
-  ) {
-  }
-
-  ngOnInit() {
-  }
+  constructor() {}
 
 
   deleteQuestion(index: number) {
-    this.storage.currentReport.questions.splice(index, 1);
-    this.afs
-      .collection("reports")
-      .doc(this.storage.currentReport.uid)
-      .update({ questions: this.storage.currentReport.questions });
+    this.questions.splice(index, 1);
   }
 
   addQuestion() {
-    this.storage.currentReport.questions.push(this.newQuestion);
-    this.saveQuestions();
+    this.questions.push(this.newQuestion);
     this.isModalOpen = false;
   }
 
   changeQuestion(index: number, value: string) {
-    this.storage.currentReport.questions[index] = value;
+    this.questions[index] = value;
   }
 
   saveQuestions() {
-    this.afs
-      .collection("reports")
-      .doc(this.storage.currentReport.uid)
-      .update({ questions: this.storage.currentReport.questions });
+    this.save.emit(this.questions);
   }
 
   newQuestionValid() {
     if (this.newQuestion == null || this.newQuestion === "") {
       return false;
     }
-    if (this.storage.currentReport.questions.some(v => v === this.newQuestion)) {
+    if (this.questions.some(v => v === this.newQuestion)) {
       return false;
     }
     return true;

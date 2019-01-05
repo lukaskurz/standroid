@@ -1,21 +1,12 @@
 import { Member } from './member';
+import { Schedule } from './schedule';
 
 export class Report {
     uid: string;
     creator_uid: string;
     team_id: string;
     name: string;
-    schedule: {
-        monday: boolean,
-        tuesday: boolean,
-        wednesday: boolean,
-        thursday: boolean,
-        friday: boolean,
-        saturday: boolean,
-        sunday: boolean,
-        hour: number,
-        minute: number,
-    };
+    schedule: Schedule;
     questions: string[];
     selectedMembers: Member[];
 }

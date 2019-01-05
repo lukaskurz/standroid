@@ -1,14 +1,15 @@
 import { Injectable } from '@angular/core';
 import { AngularFireAuth } from '@angular/fire/auth';
-import { BehaviorSubject } from 'rxjs';
+import { ReplaySubject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class UserService {
 
-  private user: BehaviorSubject<firebase.User>;
+  private user: ReplaySubject<firebase.User>;
   constructor(private fireAuth: AngularFireAuth) {
+    this.user = new ReplaySubject(1);
     this.fireAuth.user.subscribe(this.user);
   }
 

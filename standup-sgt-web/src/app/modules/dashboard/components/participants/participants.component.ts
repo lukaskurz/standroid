@@ -1,76 +1,30 @@
-import { Component, OnInit } from '@angular/core';
-import { DashboardStorageService } from 'src/app/core/services/dashboard-storage.service';
+import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { Member } from 'src/app/shared/models/member';
-import { AngularFirestore } from '@angular/fire/firestore';
-import { Router } from '@angular/router';
-import { AuthService } from 'src/app/core/auth/auth.service';
-import { HttpClient } from '@angular/common/http';
-import { first } from 'rxjs/operators';
+import { SlackService } from '@app/core/services/slack.service';
 
 @Component({
   selector: 'app-participants',
   templateUrl: './participants.component.html',
   styleUrls: ['./participants.component.scss']
 })
-export class ParticipantsComponent implements OnInit {
+export class ParticipantsComponent {
+
+  @Input() members: Member[] = [];
+  @Output() save = new EventEmitter();
 
   isModalOpen = false;
-
   teamMembers: Member[] = [];
-
   newTeamMember: Member;
 
-  constructor(
-    public storage: DashboardStorageService,
-    private afs: AngularFirestore,
-    private router: Router,
-    private auth: AuthService,
-    private http: HttpClient
-  ) {
-    this.getTeamMembers();
-  }
-
-  ngOnInit() {
-  }
-
-  getTeamMembers() {
-    this.auth.user.pipe(first()).toPromise().then(u => {
-      return this.afs.collection<{ team_id: string }>("installations", (ref) => {
-        return ref.where("creator_uid", "==", u.uid).limit(1);
-      }).get();
-    }).then(query => {
-      return query.pipe(first()).toPromise();
-    }).then(snap => {
-      const at = snap.docs[0].get("access_token");
-
-      return this.http.get(`https://slack.com/api/users.list?token=${at}`).pipe(first()).toPromise();
-    }).then((resp: { members: [] }) => {
-      this.teamMembers = resp.members.filter((v1: Member) =>
-        !this.storage.currentReport.selectedMembers.some((v2: Member) => v2.id === v1.id)
-      );
-      const selectUser = {
-        id: "-1",
-        name: "Select a name",
-        color: undefined,
-        deleted: undefined,
-        is_bot: undefined,
-        profile: undefined,
-        real_name: undefined,
-        team_id: undefined
-      };
-      this.newTeamMember = selectUser;
-      this.teamMembers.unshift(selectUser);
+  constructor(private ss: SlackService) {
+    ss.getTeamMembers().subscribe(members => {
+      this.teamMembers = members;
     });
   }
 
   removeMember(member: Member) {
-    const index = this.storage.currentReport.selectedMembers.indexOf(member);
-    this.storage.currentReport.selectedMembers.splice(index, 1);
-    this.afs
-      .collection("reports")
-      .doc(this.storage.currentReport.uid)
-      .update({ selectedMembers: this.storage.currentReport.selectedMembers });
-    this.getTeamMembers();
+    const index = this.members.indexOf(member);
+    this.members.splice(index, 1);
   }
 
   openModal() {
@@ -85,13 +39,11 @@ export class ParticipantsComponent implements OnInit {
   }
 
   addTeamMember() {
-    this.storage.currentReport.selectedMembers.push(this.newTeamMember);
-    this.afs
-      .collection("reports")
-      .doc(this.storage.currentReport.uid)
-      .update({ selectedMembers: this.storage.currentReport.selectedMembers });
-    this.isModalOpen = false;
-    this.getTeamMembers();
+    this.members.push(this.newTeamMember);
+  }
+
+  saveChanges() {
+    this.save.emit(this.members);
   }
 
 }

@@ -1,22 +1,22 @@
 <div class="wrapper">
-  <div class="content-area">
+  <div class="content-area" *ngIf="activeReport != null">
     <div class="clr-row">
       <div class="clr-col-3">
-        <app-schedule></app-schedule>
+        <app-schedule [schedule]="activeReport.schedule" (save)="updateSchedule($event)"></app-schedule>
       </div>
       <div class="clr-col-5">
-        <app-questions></app-questions>
+        <app-questions [questions]="activeReport.questions" (save)="updateQuestions($event)"></app-questions>
       </div>
     </div>
     <div class="clr-row">
       <div class="clr-col-3">
-        <app-participants></app-participants>
+        <app-participants [members]="activeReport.selectedMembers" (save)="updateMembers($event)"></app-participants>
       </div>
     </div>
   </div>
   <nav class="sidenav">
     <section class="sidenav-content" >
-      <a class="nav-link" *ngFor="let r of reports" (click)="setCurrentReport(r)" [class.active]="isActive(r)">
+      <a class="nav-link" *ngFor="let r of reports" (click)="setActiveReport(r)" [class.active]="isActiveReport(r)">
         {{r.name}}
       </a>
       <a class="nav-link" (click)="openWizard()">
