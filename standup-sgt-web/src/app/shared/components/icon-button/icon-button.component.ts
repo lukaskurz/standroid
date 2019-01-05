@@ -1,5 +1,5 @@
 import { Component, Output, Input } from '@angular/core';
-import { EventEmitter } from 'events';
+import { EventEmitter } from '@angular/core';
 
 @Component({
   selector: 'app-icon-button',
@@ -11,7 +11,9 @@ export class IconButtonComponent {
   @Output() click = new EventEmitter();
   @Input() type: string;
 
-  constructor() { }
+  constructor() {
+    this.click = new EventEmitter();
+  }
 
   triggerClick() {
     this.click.emit(null);

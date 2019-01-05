@@ -24,16 +24,6 @@ h3 {
         display: inline-block;
         flex-grow: 1;
     }
-    /deep/ .btn.btn-icon {
-        margin: 0;
-        margin-left: 10px;
-        border-color: $neon-green !important;
-        color: $neon-green !important;
-        flex-grow: 0;
-    }
-    /deep/ .btn.btn-icon:active {
-        box-shadow: none !important;
-    }
 }
 
 /deep/ .modal-body.no-scroll {
@@ -58,22 +48,4 @@ h3 {
 /deep/ div.modal-header button.close {
     // text-align: end!important;
     width: auto !important;
-}
-
-/deep/ div.modal-footer {
-    /deep/ .btn.btn-outline {
-        color: $neon-green;
-        border-color: $neon-green;
-        &:active {
-            box-shadow: none !important;
-        }
-    }
-    /deep/ .btn.btn-primary {
-        color: $dark-green;
-        border-color: $neon-green;
-        background-color: $neon-green;
-        &:active {
-            box-shadow: none !important;
-        }
-    }
 }

@@ -5,6 +5,8 @@ import { ClarityModule } from '@clr/angular';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FormsModule } from '@angular/forms';
+import { OutlineButtonComponent } from './components/outline-button/outline-button.component';
+import { PrimaryButtonComponent } from './components/primary-button/primary-button.component';
 
 @NgModule({
   imports: [
@@ -14,7 +16,15 @@ import { FormsModule } from '@angular/forms';
     BrowserAnimationsModule,
     FormsModule
   ],
-  declarations: [IconButtonComponent],
-  exports: [IconButtonComponent]
+  declarations: [
+    IconButtonComponent,
+    OutlineButtonComponent,
+    PrimaryButtonComponent
+  ],
+  exports: [
+    IconButtonComponent,
+    OutlineButtonComponent,
+    PrimaryButtonComponent
+  ]
 })
 export class SharedModule { }

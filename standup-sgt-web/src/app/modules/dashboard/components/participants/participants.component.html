@@ -8,9 +8,7 @@
         <div class="member-wrapper" *ngFor="let m of storage.currentReport.selectedMembers">
           <img [src]="m.profile.image_48">
           <span>{{m.name}}</span>
-          <button type="button" class="btn btn-icon" (click)="removeMember(m)">
-            <clr-icon shape="window-close"></clr-icon>
-          </button>
+          <app-icon-button type="window-close" (click)="removeMember(m)"></app-icon-button>
         </div>
       </ng-container>
     </div>
@@ -28,7 +26,7 @@
     </select>
   </div>
   <div class="modal-footer">
-    <button type="button" class="btn btn-outline" (click)="isModalOpen = false">Cancel</button>
-    <button type="button" class="btn btn-primary" (click)="addTeamMember()" [disabled]="!selectedMemberValid()">Add</button>
+    <app-outline-button (click)="isModalOpen = false">Cancel</app-outline-button>
+    <app-primary-button (click)="addTeamMember()" [disabled]="!selectedMemberValid()">Add</app-primary-button>
   </div>
 </clr-modal>
