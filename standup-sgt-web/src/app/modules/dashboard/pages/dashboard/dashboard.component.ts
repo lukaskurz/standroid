@@ -12,6 +12,8 @@ export class DashboardComponent implements OnInit {
 
   user: User;
 
+  screaming = false;
+
   constructor(public auth: AuthService, private router: Router) {
     auth.user.subscribe(user => {
       this.user = user;

@@ -1,6 +1,7 @@
 @import "../../../../../theme.scss";
 $branding-img-width: 36px;
 $branding-img-width-small: 36px;
+$branding-img-width-scream: 48px;
 @keyframes shake {
     0% {
         transform: translate(1px, 1px) rotate(0deg);
@@ -35,6 +36,14 @@ $branding-img-width-small: 36px;
     100% {
         transform: translate(1px, -2px) rotate(-1deg);
     }
+}
+
+.alert-image {
+    width: $branding-img-width-scream !important;
+    height: $branding-img-width-scream !important;
+    animation: shake 0.7s;
+    animation-iteration-count: infinite;
+    position: relative;
 }
 
 .alert-app-level {
@@ -114,19 +123,19 @@ $branding-img-width-small: 36px;
     color: $light-grey;
 }
 
-.nav-item a{
-    color:white;
+.nav-item a {
+    color: white;
 }
 
-.nav-item a:hover{
+.nav-item a:hover {
     box-shadow: 0 -3px 0 $dark-green inset;
 }
 
-.nav-item a.active{
+.nav-item a.active {
     box-shadow: 0 -3px 0 $dark-green inset;
     font-weight: 600;
 }
 
 /deep/ .content-container>.ng-star-inserted {
-    width: 100%!important;
+    width: 100% !important;
 }
