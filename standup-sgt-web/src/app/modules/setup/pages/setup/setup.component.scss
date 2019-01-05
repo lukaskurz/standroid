@@ -1,0 +1,121 @@
+@import "../../../../../theme.scss";
+div.background {
+    min-height: 100vh;
+    width: 100%;
+    background: url("../../../../../assets/img/camouflage3.png");
+    /deep/ .modal-backdrop {
+        background-color: rgba(0, 0, 0, 0.5) !important;
+    }
+}
+
+// Top button 
+/deep/ .modal-header button.close {
+    box-shadow: none !important;
+}
+
+// Sidenav
+/deep/ .modal-nav.clr-wizard-stepnav-wrapper {
+    background-color: $darkest-green !important;
+}
+
+/deep/ .clr-wizard .clr-wizard-stepnav-item.active .clr-wizard-stepnav-link {
+    background-color: $green !important;
+}
+
+/deep/ .btn.btn-link.clr-wizard-stepnav-link:hover {
+    color: $neon-green;
+}
+
+/deep/ .active .btn.btn-link.clr-wizard-stepnav-link:hover {
+    color: $light-green !important;
+}
+
+// Content
+/deep/ .modal-content {
+    background-color: $dark-green !important;
+}
+
+/deep/ .btn.btn-primary,
+/deep/ .btn.clr-wizard-btn.btn-primary.clr-wizard-btn--primary {
+    border-color: $neon-green !important;
+    background-color: $neon-green !important;
+    color: black;
+}
+
+/deep/ .btn.btn-primary:active,
+/deep/ .btn.clr-wizard-btn.btn-primary.clr-wizard-btn--primary:active {
+    box-shadow: none !important;
+}
+
+/deep/ .btn.btn-outline,
+/deep/ .btn.clr-wizard-btn.btn-outline.clr-wizard-btn--secondary {
+    border-color: $neon-green !important;
+    color: $neon-green !important;
+}
+
+/deep/ .btn.btn-outline:active,
+/deep/ .btn.clr-wizard-btn.btn-outline.clr-wizard-btn--secondary:active {
+    box-shadow: none !important;
+}
+
+/deep/ .btn.clr-wizard-btn.btn-link.clr-wizard-btn--tertiary {
+    color: $neon-green !important;
+}
+
+/deep/ .clr-input-wrapper input {
+    width: 400px;
+}
+
+/deep/ .questions-wrapper {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    height: 50px;
+    /deep/ .clr-form-control.ng-star-inserted {
+        margin: 0px;
+    }
+    /deep/ .btn.btn-icon {
+        margin: 0;
+        margin-left: 10px;
+        border-color: $neon-green !important;
+        color: $neon-green !important;
+    }
+    /deep/ .btn.btn-icon:active {
+        box-shadow: none !important;
+    }
+}
+
+/deep/ .clr-checkbox-wrapper input[type=checkbox]:checked+label::before {
+    background: $green;
+}
+
+/deep/ .clr-checkbox-wrapper input[type='checkbox']:focus+label::before {
+    box-shadow: 0 0 2px 2px $green;
+}
+
+/deep/ .form-block input:not([readonly]),
+/deep/ .form-group input:not([readonly]) {
+    background: linear-gradient(to bottom, transparent 95%, $neon-green 95%) no-repeat !important;
+    background-size: 0 100% !important;
+    border-bottom: 1px solid transparent !important;
+    transition: background-size .2s ease !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.5) !important;
+}
+
+/deep/ .form-block input:focus,
+/deep/ .form-group input:focus {
+    background-size: 100% 100% !important;
+}
+
+
+/deep/ .form-block select {
+    background: linear-gradient(to bottom, transparent 95%, $neon-green 95%) no-repeat !important;
+    background-size: 0 100% !important;
+    border-bottom: 1px solid transparent !important;
+    transition: background-size .2s ease !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.5) !important;
+}
+
+/deep/ .form-block select:focus {
+    background-size: 100% 100% !important;
+}

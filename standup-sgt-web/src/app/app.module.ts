@@ -9,25 +9,26 @@ import { HttpClientModule } from '@angular/common/http';
 import { ClarityModule } from "@clr/angular";
 
 // Application
-import { AppRoutingModule } from './app-routing.module';
-import { AppComponent } from './app.component';
-import { DashboardComponent } from './dashboard/dashboard.component';
-import { LoginComponent } from './login/login.component';
-import { RegisterComponent } from './register/register.component';
+import { AppRoutingModule } from '@app/app-routing.module';
+import { AppComponent } from '@app/app.component';
+import { DashboardComponent } from '@modules/dashboard/pages/dashboard/dashboard.component';
+import { LoginComponent } from '@modules/login/pages/login/login.component';
+import { RegisterComponent } from '@modules/login/pages/register/register.component';
 import { AngularFireModule } from "@angular/fire";
 import { environment } from '../environments/environment';
-import { CoreModule } from './core/core.module';
-import { EmailVerificationComponent } from './email-verification/email-verification.component';
-import { SetupComponent } from './setup/setup.component';
-import { InstallComponent } from './install/install.component';
-import { FailureComponent } from './install/failure/failure.component';
+import { CoreModule } from '@core/core.module';
+import { EmailVerificationComponent } from '@modules/login/pages/email-verification/email-verification.component';
+import { SetupComponent } from '@modules/setup/pages/setup/setup.component';
+import { InstallComponent } from '@modules/setup/pages/install/install.component';
+import { FailureComponent } from '@modules/setup/components/failure/failure.component';
 import { AngularFirestoreModule } from '@angular/fire/firestore';
-import { SuccessComponent } from './install/success/success.component';
-import { ReportComponent } from './dashboard/report/report.component';
-import { ParticipantsComponent } from './dashboard/report/participants/participants.component';
-import { ScheduleComponent } from './dashboard/report/schedule/schedule.component';
-import { QuestionsComponent } from './dashboard/report/questions/questions.component';
-import { CreationWizardComponent } from './dashboard/report/creation-wizard/creation-wizard.component';
+import { SuccessComponent } from '@modules/setup/components/success/success.component';
+import { ReportComponent } from '@modules/dashboard/pages/report/report.component';
+import { ParticipantsComponent } from '@modules/dashboard/components/participants/participants.component';
+import { ScheduleComponent } from '@modules/dashboard/components/schedule/schedule.component';
+import { QuestionsComponent } from '@modules/dashboard/components/questions/questions.component';
+import { CreationWizardComponent } from '@modules/dashboard/components/creation-wizard/creation-wizard.component';
+import { SharedModule } from '@shared/shared.module';
 
 @NgModule({
    declarations: [
@@ -55,7 +56,8 @@ import { CreationWizardComponent } from './dashboard/report/creation-wizard/crea
       HttpClientModule,
       AngularFireModule.initializeApp(environment.firebase, "standup-sgt-web"),
       AngularFirestoreModule,
-      CoreModule
+      CoreModule,
+      SharedModule
    ],
    providers: [],
    bootstrap: [

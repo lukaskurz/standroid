@@ -1,18 +1,18 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-import { LoginComponent } from './login/login.component';
-import { RegisterComponent } from './register/register.component';
-import { DashboardComponent } from './dashboard/dashboard.component';
-import { AuthGuard } from './core/guards/auth.guard';
-import { EmailVerificationComponent } from './email-verification/email-verification.component';
-import { SetupComponent } from './setup/setup.component';
-import { InstallComponent } from './install/install.component';
-import { FailureComponent } from "./install/failure/failure.component";
-import { SuccessComponent } from './install/success/success.component';
-import { ReportComponent } from './dashboard/report/report.component';
-import { ParticipantsComponent } from './dashboard/report/participants/participants.component';
-import { ScheduleComponent } from './dashboard/report/schedule/schedule.component';
-import { QuestionsComponent } from './dashboard/report/questions/questions.component';
+import { LoginComponent } from '@modules/login/pages/login/login.component';
+import { RegisterComponent } from '@modules/login/pages/register/register.component';
+import { DashboardComponent } from '@modules/dashboard/pages/dashboard/dashboard.component';
+import { AuthGuard } from '@core/guards/auth.guard';
+import { EmailVerificationComponent } from '@modules/login/pages/email-verification/email-verification.component';
+import { SetupComponent } from '@modules/setup/pages/setup/setup.component';
+import { InstallComponent } from '@modules/setup/pages/install/install.component';
+import { FailureComponent } from "@modules/setup/components/failure/failure.component";
+import { SuccessComponent } from '@modules/setup/components/success/success.component';
+import { ReportComponent } from '@modules/dashboard/pages/report/report.component';
+import { ParticipantsComponent } from '@modules/dashboard/components/participants/participants.component';
+import { ScheduleComponent } from '@modules/dashboard/components/schedule/schedule.component';
+import { QuestionsComponent } from '@modules/dashboard/components/questions/questions.component';
 
 const dashboardRoutes: Routes = [
   { path: "", redirectTo: "report", pathMatch: "full" },
