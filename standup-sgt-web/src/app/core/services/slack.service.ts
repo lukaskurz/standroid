@@ -14,6 +14,7 @@ export class SlackService {
   private teamMembers: ReplaySubject<Member[]>;
   constructor(private is: InstallationService, private http: HttpClient) {
     this.teamMembers = new ReplaySubject(1);
+    this.requestTeamMembers().then(members => this.teamMembers.next(members));
   }
 
   getTeamMembers(refresh = false) {

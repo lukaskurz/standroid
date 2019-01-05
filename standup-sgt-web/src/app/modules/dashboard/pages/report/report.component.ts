@@ -22,6 +22,9 @@ export class ReportComponent {
   constructor(private afs: AngularFirestore, private rs: ReportService) {
     rs.getReports().subscribe(reports => {
       this.reports = reports;
+      if (this.activeReport == null && this.reports.length > 0) {
+        this.activeReport = reports[0];
+      }
     });
   }
 

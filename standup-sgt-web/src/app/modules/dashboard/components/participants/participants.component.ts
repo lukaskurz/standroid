@@ -40,6 +40,13 @@ export class ParticipantsComponent {
 
   addTeamMember() {
     this.members.push(this.newTeamMember);
+    this.isModalOpen = false;
+  }
+
+  availableTeamMembers() {
+    return this.teamMembers.filter(m1 => {
+      return !this.members.some(m2 => m2.id === m1.id);
+    });
   }
 
   saveChanges() {

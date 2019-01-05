@@ -4,7 +4,7 @@
   </div>
   <div class="card-block">
     <div class="card-text">
-      <ng-container *ngIf="storage.currentReport != null">
+      <ng-container>
         <div class="member-wrapper" *ngFor="let m of members">
           <img [src]="m.profile.image_48">
           <span>{{m.name}}</span>
@@ -23,8 +23,8 @@
   <h3 class="modal-title">Add a participant</h3>
   <div class="modal-body no-scroll">
     <select clrSelect [(ngModel)]="newTeamMember">
-      <option [ngValue]="null">Select a team member</option>
-      <option *ngFor="let tm of teamMembers" [ngValue]="tm">{{tm.name}}</option>
+      <option [ngValue]="undefined" disabled="true">Select participant</option>
+      <option *ngFor="let tm of availableTeamMembers()" [ngValue]="tm">{{tm.name}}</option>
     </select>
   </div>
   <div class="modal-footer">
