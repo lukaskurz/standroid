@@ -52,7 +52,6 @@
               <select id="select-hour" class="clr-select" [(ngModel)]="storage.currentReport.schedule.hour" name="hours">
                 <option *ngFor="let h of hours" [ngValue]="h">{{h}}</option>
               </select>
-              <clr-icon class="clr-validate-icon" shape="exclamation-circle"></clr-icon>
             </div>
             <span class="clr-subtext">Hour</span>
           </div>
@@ -61,7 +60,6 @@
               <select id="select-minute" class="clr-select" [(ngModel)]="storage.currentReport.schedule.minute" name="minutes">
                 <option *ngFor="let m of minutes" [ngValue]="m">{{m}}</option>
               </select>
-              <clr-icon class="clr-validate-icon" shape="exclamation-circle"></clr-icon>
             </div>
             <span class="clr-subtext">Minute</span>
           </div>

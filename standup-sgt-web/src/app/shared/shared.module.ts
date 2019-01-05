@@ -7,6 +7,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FormsModule } from '@angular/forms';
 import { OutlineButtonComponent } from './components/outline-button/outline-button.component';
 import { PrimaryButtonComponent } from './components/primary-button/primary-button.component';
+import { LinkButtonComponent } from './components/link-button/link-button.component';
 
 @NgModule({
   imports: [
@@ -19,12 +20,14 @@ import { PrimaryButtonComponent } from './components/primary-button/primary-butt
   declarations: [
     IconButtonComponent,
     OutlineButtonComponent,
-    PrimaryButtonComponent
+    PrimaryButtonComponent,
+    LinkButtonComponent,
   ],
   exports: [
     IconButtonComponent,
     OutlineButtonComponent,
-    PrimaryButtonComponent
+    PrimaryButtonComponent,
+    LinkButtonComponent,
   ]
 })
 export class SharedModule { }
