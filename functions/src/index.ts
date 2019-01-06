@@ -4,16 +4,11 @@ import * as admin from "firebase-admin";
 import { Schedule } from './schedule';
 import { Member } from './member';
 import { Standup } from './standup';
-import * as http from "http";
 import { Report } from './report';
 import { Installation } from './installation';
 
 admin.initializeApp();
 const db = admin.firestore();
-
-export const get_time = functions.https.onRequest(async (request, response) => {
-    return response.status(200).set("Accept", "application/json").send(JSON.stringify(convertToOtherTimezone(new Date(), 3600).toString()));
-});
 
 interface SlackEvent {
     team_id: string;
@@ -27,14 +22,14 @@ interface SlackEvent {
 }
 
 export const slack_event = functions.https.onRequest(async (request, response) => {
-    console.log(`Got slack message from ${request.hostname} - ${request.host}`);
     const body: SlackEvent = request.body;
     console.log(`Message body: ${JSON.stringify(request.body)}`);
 
-    if(body.event.subtype !== undefined){
+    if (body.event.subtype !== undefined) {
         response.status(200).send();
         return;
     }
+
     const installation: Installation = (await db.collection("installations").doc(body.team_id).get()).data() as Installation;
     const standupRefs = await db.collection("standups")
         .where("memberId", "==", body.event.user)
@@ -46,6 +41,20 @@ export const slack_event = functions.https.onRequest(async (request, response) =
         standup.answers.push(body.event.text);
         if (standup.answers.length === standup.questions.length) {
             standup.finished = true;
+            const possibilities = 3;
+            const messageRandom = Math.floor(Math.random() * possibilities);
+            let finishedMessage: string;
+            switch (messageRandom) {
+                case 0: finishedMessage = `Alright maggot, that's all I need. *DISMISSED*`
+                    break;
+                case 1: finishedMessage = `That's everything I needed Micky Mouse. *FALL OUT*`
+                    break;
+                case 2: finishedMessage = `Atleast you're good for something. What are you waiting for princess? *DISMISSED*`
+                    break;
+            }
+            // TODO: Send finished standup to channel
+            sendSlackMessage(installation, body.event.channel, finishedMessage);
+            await handleAllReports(installation.team_id); // Check for open standups
         } else {
             const question = standup.questions[standup.answers.length];
             sendSlackMessage(installation, body.event.channel, question);
@@ -56,7 +65,24 @@ export const slack_event = functions.https.onRequest(async (request, response) =
 });
 
 export const send_standups = functions.https.onRequest(async (request, response) => {
-    const reportRefs = await db.collection("reports").get();
+    // If request not from cloud scheduler
+    if (
+        JSON.parse(request.body).secret === undefined
+        || JSON.parse(request.body).secret !== functions.config().cloudscheduler.secret
+    ) {
+        return response.status(401).send();
+    }
+
+    await handleAllReports();
+
+    return response.status(200).send();
+});
+
+async function handleAllReports(team_id?: string) {
+    // tslint:disable-next-line:triple-equals
+    const reportRefs = team_id != null ?
+        await db.collection("reports").get()
+        : await db.collection("reports").where("team_id", "==", team_id).get();
     console.log(`Got ${reportRefs.size} reports.`);
     const promises: Promise<void>[] = [];
 
@@ -65,17 +91,12 @@ export const send_standups = functions.https.onRequest(async (request, response)
         promises.push(handleReport(report));
     });
 
-    await Promise.all(promises);
-
-    return response.status(200).send();
-});
+    return Promise.all(promises);
+}
 
 async function handleReport(report: Report) {
-    console.log(`Handling report ${report.uid}`);
     const installation: Installation = (await db.collection("installations").doc(report.team_id).get()).data() as Installation;
-    console.log(`Retrieved installation data for team ${installation.team_id}`);
     const dueMembers = await getDueMembers(report);
-    console.log(`Got ${dueMembers.length} due members`);
 
     if (dueMembers.length <= 0) {
         return;
@@ -86,7 +107,6 @@ async function handleReport(report: Report) {
         const standup = createStandup(member, report);
         const standupRef = db.collection("standups").doc()
 
-        // standupRef.set({ uid: standupRef.id });
         batch.set(standupRef, standup);
         batch.update(standupRef, { uid: standupRef.id });
     }
@@ -95,7 +115,20 @@ async function handleReport(report: Report) {
 
     const channelMap = await getDirectChannelIds(installation, dueMembers);
 
+    const possibilities = 2;
+    const messageRandom = Math.floor(Math.random() * possibilities);
+
     for (const member of dueMembers) {
+        let greeting: string;
+
+        switch (messageRandom) {
+            case 0: greeting = `:bangbang: *ATTENTION, Private <@${member.id}>* :bangbang: Time to answer some questions for your ${report.name}.`;
+                break;
+            case 1: greeting = `:eyes: *EYES FRONT, Private <@${member.id}>* :boom: Report in for your ${report.name}.`
+                break;
+        }
+
+        await sendSlackMessage(installation, channelMap[member.id], greeting);
         sendSlackMessage(installation, channelMap[member.id], report.questions[0]);
     }
 }
@@ -104,8 +137,6 @@ async function getDueMembers(report: Report) {
     const dueMembers: Member[] = [];
 
     for (const member of report.selectedMembers) {
-        console.log(`member ${member.id} is due: ${isMemberDue(member, report.schedule)}`);
-        console.log(`member ${member.id} has standup: ${await isStandupCreated(member, report)}`);
         if (isMemberDue(member, report.schedule) && !(await isStandupCreated(member, report))) {
             dueMembers.push(member);
         }
@@ -133,7 +164,8 @@ async function isStandupCreated(member: Member, report: Report) {
     const snapshot = await db.collection("standups")
         .where("memberId", "==", member.id)
         .where("reportUid", "==", report.uid)
-        .where("date", "==", memberTime.toDateString()).get();
+        .where("date", "==", memberTime.toDateString())
+        .where("finished", "==", false).get();
 
     return snapshot.size > 0;
 }
