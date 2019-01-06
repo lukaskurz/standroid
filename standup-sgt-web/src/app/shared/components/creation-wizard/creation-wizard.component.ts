@@ -1,4 +1,4 @@
-import { Component, ViewChild, Input } from '@angular/core';
+import { Component, ViewChild, Input, OnInit } from '@angular/core';
 import { ClrWizard, ClrModal } from '@clr/angular';
 import { Report } from 'src/app/shared/models/report';
 import { Router } from '@angular/router';
@@ -12,7 +12,7 @@ import { Channel } from '@app/shared/models/channel';
   templateUrl: './creation-wizard.component.html',
   styleUrls: ['./creation-wizard.component.scss']
 })
-export class CreationWizardComponent {
+export class CreationWizardComponent implements OnInit {
   @Input() first = false;
 
   @ViewChild("wizard") wizard: ClrWizard;
@@ -64,9 +64,11 @@ export class CreationWizardComponent {
 
     ss.getTeamMembers().subscribe(members => this.teamMembers = members);
     ss.getChannels().subscribe(channels => this.channels = channels);
+  }
 
+  ngOnInit() {
     if (this.first) {
-      this.wizardOpen = true;
+      this.wizard.open();
     }
   }
 
