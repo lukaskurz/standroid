@@ -6,6 +6,9 @@ import { Report } from '@app/shared/models/report';
 import { Schedule } from '@app/shared/models/schedule';
 import { Member } from '@app/shared/models/member';
 import { take, tap } from 'rxjs/operators';
+import { InstallationService } from './installation.service';
+import { User } from 'firebase';
+import { Installation } from '@app/shared/models/installation';
 
 @Injectable({
   providedIn: 'root'
@@ -14,7 +17,7 @@ export class ReportService {
 
   private reports: ReplaySubject<Report[]>;
 
-  constructor(private afs: AngularFirestore, private us: UserService) {
+  constructor(private afs: AngularFirestore, private us: UserService, private is: InstallationService) {
     this.reports = new ReplaySubject(1);
     this.setReports();
   }
@@ -41,6 +44,25 @@ export class ReportService {
 
   updateMembers(report: Report, newMember: Member[]) {
     return this.updateReport(report, { selectedMembers: newMember });
+  }
+
+  async createReport(report: Report) {
+    report.uid = this.afs.createId();
+
+    const user: User = (await new Promise((resolve, reject) => {
+      this.us.getUser().subscribe(u => {
+        resolve(u);
+      });
+    })) as User;
+    report.creator_uid = user.uid;
+
+    const installation: Installation = (await new Promise((resolve, reject) => {
+      this.is.getInstallation().subscribe(i => {
+        resolve(i);
+      });
+    })) as Installation;
+    report.team_id = installation.team_id;
+    return this.afs.collection("reports").doc(report.uid).set(report);
   }
 
   private updateReport(report: Report, changes: {}) {

@@ -1,10 +1,11 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component, ViewChild, Input } from '@angular/core';
 import { ClrWizard, ClrModal } from '@clr/angular';
 import { Report } from 'src/app/shared/models/report';
-import { AngularFirestore } from '@angular/fire/firestore';
-import { AuthService } from 'src/app/core/auth/auth.service';
-import { HttpClient } from '@angular/common/http';
-import { first } from 'rxjs/operators';
+import { Router } from '@angular/router';
+import { SlackService } from '@app/core/services/slack.service';
+import { ReportService } from '@app/core/services/report.service';
+import { Member } from '@app/shared/models/member';
+import { Channel } from '@app/shared/models/channel';
 
 @Component({
   selector: 'app-creation-wizard',
@@ -12,6 +13,8 @@ import { first } from 'rxjs/operators';
   styleUrls: ['./creation-wizard.component.scss']
 })
 export class CreationWizardComponent {
+  @Input() first = false;
+
   @ViewChild("wizard") wizard: ClrWizard;
   wizardOpen = false;
 
@@ -40,15 +43,18 @@ export class CreationWizardComponent {
       "Did something hinder you with your work?",
       "Something worth mentioning?"
     ],
-    selectedMembers: []
+    selectedMembers: [],
+    channel: null
   };
 
   hours: number[] = [];
   minutes: number[] = [];
 
-  teamMembers: any[] = [];
+  teamMembers: Member[] = [];
+  channels: Channel[] = [];
 
-  constructor(private afs: AngularFirestore, private auth: AuthService, private http: HttpClient) {
+
+  constructor(private ss: SlackService, private router: Router, private rs: ReportService) {
     for (let counter = 0; counter < 24; counter++) {
       this.hours.push(counter);
     }
@@ -56,7 +62,12 @@ export class CreationWizardComponent {
       this.minutes.push(counter * 5);
     }
 
-    this.getTeamMembers();
+    ss.getTeamMembers().subscribe(members => this.teamMembers = members);
+    ss.getChannels().subscribe(channels => this.channels = channels);
+
+    if (this.first) {
+      this.wizardOpen = true;
+    }
   }
 
   anyDayChecked() {
@@ -75,8 +86,20 @@ export class CreationWizardComponent {
   }
 
   doCancel() {
-    this.wizardOpen = false;
-    this.resetWizard();
+    if (this.first) {
+      this.reminderModal.open();
+    } else {
+      this.wizard.close();
+      this.resetWizard();
+    }
+  }
+
+  closeModal() {
+    this.reminderModal.close();
+  }
+
+  redirectToDashboard() {
+    this.router.navigateByUrl("dashboard");
   }
 
   deleteQuestion(q: string) {
@@ -90,20 +113,22 @@ export class CreationWizardComponent {
     this.report.questions.push("Another question");
   }
 
-  getTeamMembers() {
-    this.auth.user.pipe(first()).toPromise().then(u => {
-      return this.afs.collection<{ team_id: string }>("installations", (ref) => {
-        return ref.where("creator_uid", "==", u.uid).limit(1);
-      }).get();
-    }).then(query => {
-      return query.pipe(first()).toPromise();
-    }).then(snap => {
-      const at = snap.docs[0].get("access_token");
-      return this.http.get(`https://slack.com/api/users.list?token=${at}`).pipe(first()).toPromise();
-    }).then((resp: { members: [] }) => {
-      this.teamMembers = resp.members;
-      this.teamMembers.unshift({ id: "-1", name: "Select a name" });
-    });
+  selectChannel(id: string) {
+    if (id === "-1") {
+      return;
+    }
+
+    let index = -1;
+    for (let i = 0; i < this.channels.length; i++) {
+      if (this.channels[i].id === id) {
+        index = i;
+        break;
+      }
+    }
+
+    if (index !== -1) {
+      this.report.channel = this.channels[index];
+    }
   }
 
   selectTeamMember(id: string) {
@@ -145,25 +170,10 @@ export class CreationWizardComponent {
   }
 
   saveReport() {
-    this.report.uid = this.afs.createId();
-
-    this.auth.user.pipe(first()).toPromise().then(u => {
-      this.report.creator_uid = u.uid;
-
-      return this.afs.collection<{ team_id: string }>("installations", (ref) => {
-        return ref.where("creator_uid", "==", u.uid).limit(1);
-      }).get();
-    }).then(query => {
-      return query.pipe(first()).toPromise();
-    }).then(snap => {
-      this.report.team_id = snap.docs[0].get("team_id");
-
-      const salt = new Date().toUTCString();
-      this.afs.collection("reports").doc(this.report.uid).set(this.report);
-    }).then(() => {
-      this.wizardOpen = false;
-      this.resetWizard();
-    });
+    this.rs.createReport(this.report);
+    if (this.first) {
+      this.redirectToDashboard();
+    }
   }
 
   resetWizard() {
@@ -189,7 +199,8 @@ export class CreationWizardComponent {
         "Did something hinder you with your work?",
         "Something worth mentioning?"
       ],
-      selectedMembers: []
+      selectedMembers: [],
+      channel: null
     };
 
     this.wizard.reset();

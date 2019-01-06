@@ -21,48 +21,102 @@ interface SlackEvent {
     }
 }
 
-export const slack_event = functions.https.onRequest(async (request, response) => {
+export const slack_event = functions.https.onRequest((request, response) => {
     const body: SlackEvent = request.body;
     console.log(`Message body: ${JSON.stringify(request.body)}`);
 
     if (body.event.subtype !== undefined) {
+        console.info("Bot message");
         response.status(200).send();
-        return;
+        return Promise.resolve();
     }
+    console.info("User message");
+    response.status(200).send();
 
-    const installation: Installation = (await db.collection("installations").doc(body.team_id).get()).data() as Installation;
-    const standupRefs = await db.collection("standups")
-        .where("memberId", "==", body.event.user)
-        .where("finished", "==", false).get();
+    console.log("Fetching installation");
+    return db.collection("installations").doc(body.team_id).get()
+        .then(iRef => {
+            const installation = iRef.data() as Installation;
 
-    console.log(`Got ${standupRefs.size} standups matched to message`);
-    if (standupRefs.size > 0) {
-        const standup: Standup = standupRefs.docs[0].data() as Standup;
-        standup.answers.push(body.event.text);
-        if (standup.answers.length === standup.questions.length) {
-            standup.finished = true;
-            const possibilities = 3;
-            const messageRandom = Math.floor(Math.random() * possibilities);
-            let finishedMessage: string;
-            switch (messageRandom) {
-                case 0: finishedMessage = `Alright maggot, that's all I need. *DISMISSED*`
-                    break;
-                case 1: finishedMessage = `That's everything I needed Micky Mouse. *FALL OUT*`
-                    break;
-                case 2: finishedMessage = `Atleast you're good for something. What are you waiting for princess? *DISMISSED*`
-                    break;
-            }
-            // TODO: Send finished standup to channel
-            sendSlackMessage(installation, body.event.channel, finishedMessage);
-            await handleAllReports(installation.team_id); // Check for open standups
-        } else {
-            const question = standup.questions[standup.answers.length];
-            sendSlackMessage(installation, body.event.channel, question);
-        }
-
-        db.collection("standups").doc(standup.uid).set(standup);
-    }
+            console.log("Fetching active standup");
+            return db.collection("standups")
+                .where("memberId", "==", body.event.user)
+                .where("finished", "==", false).get()
+                .then(sRefs => {
+                    console.log(`Got ${sRefs.size} standups matched to message`);
+                    if (sRefs.size > 0) {
+                        const standup = sRefs.docs[0].data() as Standup;
+                        standup.answers.push(body.event.text);
+                        console.info("Handling standup now");
+                        return handleStandup(standup, installation, body.event.channel);
+                    }
+                    return Promise.resolve(null);
+                })
+        })
+        .catch(error => {
+            console.error(error)
+        })
 });
+
+function handleStandup(standup: Standup, installation: Installation, channel: string) {
+    const promisePool: Promise<any>[] = [];
+
+    if (standup.answers.length === standup.questions.length) {
+        standup.finished = true;
+        console.info("Standup is finished");
+
+        console.log("Sending finished message");
+        promisePool.push(
+            new Promise((res, rej) => {
+                sendSlackMessage(installation, channel, generateFinishedMessage()).catch(v => rej(v)).then(v => res());
+            })
+        );
+
+        console.log("Fetching reports")
+        promisePool.push(
+            db.collection("reports").doc(standup.reportUid).get().then(ref => {
+                const report = ref.data() as Report;
+                return new Promise((res, rej) => {
+                    console.log("Sending finished Standup")
+                    sendFinishedStandup(
+                        installation,
+                        report,
+                        report.selectedMembers.find(m => m.id === standup.memberId),
+                        standup
+                    ).catch(v => rej(v)).then(v => res());
+                })
+            })
+        );
+
+        // handleAllReports(installation.team_id); // Check for open standups
+    } else {
+        const question = standup.questions[standup.answers.length];
+        promisePool.push(
+            new Promise((res, rej) => {
+                sendSlackMessage(installation, channel, question).catch(v => rej(v)).then(v => res());
+            })
+        );
+    }
+
+    promisePool.push(db.collection("standups").doc(standup.uid).set(standup));
+
+    return Promise.all(promisePool);
+}
+
+function generateFinishedMessage() {
+    const possibilities = 3;
+    const messageRandom = Math.floor(Math.random() * possibilities);
+    let finishedMessage: string;
+    switch (messageRandom) {
+        case 0: finishedMessage = `Alright maggot, that's all I need. *DISMISSED*`
+            break;
+        case 1: finishedMessage = `That's everything I needed Micky Mouse. *FALL OUT*`
+            break;
+        case 2: finishedMessage = `Atleast you're good for something. What are you waiting for, princess? *DISMISSED*`
+            break;
+    }
+    return finishedMessage;
+}
 
 export const send_standups = functions.https.onRequest(async (request, response) => {
     // If request not from cloud scheduler
@@ -80,7 +134,7 @@ export const send_standups = functions.https.onRequest(async (request, response)
 
 async function handleAllReports(team_id?: string) {
     // tslint:disable-next-line:triple-equals
-    const reportRefs = team_id != null ?
+    const reportRefs = team_id === undefined ?
         await db.collection("reports").get()
         : await db.collection("reports").where("team_id", "==", team_id).get();
     console.log(`Got ${reportRefs.size} reports.`);
@@ -258,16 +312,58 @@ function sendSlackMessage(installation: Installation, channelId: string, text: s
     const options = {
         uri: "https://slack.com/api/chat.postMessage",
         method: "POST",
-        json: false,
-        qs: {
-            token: installation.bot.token,
+        json: true,
+        body: {
             channel: channelId,
             text: text
+        },
+        headers: {
+            "Content-Type": "application/json"
+        },
+        auth: {
+            "bearer": installation.bot.token
         }
     };
 
     return rp(options);
 }
+
+function sendFinishedStandup(installation: Installation, report: Report, member: Member, standup: Standup) {
+    const options = {
+        uri: "https://slack.com/api/chat.postMessage",
+        method: "POST",
+        json: true,
+        auth: {
+            "bearer": installation.bot.token
+        },
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: {
+            channel: report.channel.id,
+            attachments: [
+                {
+                    pretext: `:bangbang: *AT EASE* :bangbang: Another standup is finished.`,
+                    author_name: `${member.name} ~ ${member.real_name}`,
+                    author_icon: member.profile.image_72,
+                    color: "#1D5100",
+                    title: report.name,
+                    fields: standup.questions.map((value, index) => {
+                        return {
+                            title: value,
+                            value: standup.answers[index],
+                            short: false
+                        };
+                    }),
+                    footer: new Date().toTimeString()
+                }
+            ]
+        },
+    };
+
+    return rp(options);
+}
+
 
 export const oauth_redirect = functions.https.onRequest(async (request, response) => {
     if (request.method !== "GET") {

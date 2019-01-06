@@ -1,5 +1,6 @@
 import { Member } from './member';
 import { Schedule } from './schedule';
+import { Channel } from './channel';
 
 export class Report {
     uid: string;
@@ -9,4 +10,5 @@ export class Report {
     schedule: Schedule;
     questions: string[];
     selectedMembers: Member[];
+    channel: Channel;
 }
