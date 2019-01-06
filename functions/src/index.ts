@@ -74,7 +74,7 @@ async function postFinishedStandup(standup: Standup, installation?: Installation
             "Content-Type": "application/json"
         },
         body: {
-            channel: report.channel,
+            channel: report.channel.id,
             attachments: [
                 {
                     pretext: `:bangbang: *AT EASE* :bangbang: Another standup is finished.`,
