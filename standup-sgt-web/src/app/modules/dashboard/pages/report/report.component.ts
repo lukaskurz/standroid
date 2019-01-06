@@ -1,7 +1,7 @@
 import { Component, ViewChild } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { Report } from '@shared/models/report';
-import { CreationWizardComponent } from '@modules/dashboard/components/creation-wizard/creation-wizard.component';
+import { CreationWizardComponent } from '@shared/components/creation-wizard/creation-wizard.component';
 import { ReportService } from '@app/core/services/report.service';
 import { Schedule } from '@app/shared/models/schedule';
 import { Member } from '@app/shared/models/member';
