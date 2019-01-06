@@ -300,8 +300,7 @@ async function isStandupCreated(member: Member, report: Report) {
     const snapshot = await db.collection("standups")
         .where("memberId", "==", member.id)
         .where("reportUid", "==", report.uid)
-        .where("date", "==", memberTime.toDateString())
-        .where("finished", "==", false).get();
+        .where("date", "==", memberTime.toDateString()).get();
 
     return snapshot.size > 0;
 }
