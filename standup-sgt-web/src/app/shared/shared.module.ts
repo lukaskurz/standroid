@@ -8,6 +8,7 @@ import { FormsModule } from '@angular/forms';
 import { OutlineButtonComponent } from './components/outline-button/outline-button.component';
 import { PrimaryButtonComponent } from './components/primary-button/primary-button.component';
 import { LinkButtonComponent } from './components/link-button/link-button.component';
+import { CreationWizardComponent } from './components/creation-wizard/creation-wizard.component';
 
 @NgModule({
   imports: [
@@ -22,12 +23,14 @@ import { LinkButtonComponent } from './components/link-button/link-button.compon
     OutlineButtonComponent,
     PrimaryButtonComponent,
     LinkButtonComponent,
+    CreationWizardComponent
   ],
   exports: [
     IconButtonComponent,
     OutlineButtonComponent,
     PrimaryButtonComponent,
     LinkButtonComponent,
+    CreationWizardComponent
   ]
 })
 export class SharedModule { }

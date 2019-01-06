@@ -27,7 +27,6 @@ import { ReportComponent } from '@modules/dashboard/pages/report/report.componen
 import { ParticipantsComponent } from '@modules/dashboard/components/participants/participants.component';
 import { ScheduleComponent } from '@modules/dashboard/components/schedule/schedule.component';
 import { QuestionsComponent } from '@modules/dashboard/components/questions/questions.component';
-import { CreationWizardComponent } from '@modules/dashboard/components/creation-wizard/creation-wizard.component';
 import { SharedModule } from '@shared/shared.module';
 
 @NgModule({
@@ -45,7 +44,6 @@ import { SharedModule } from '@shared/shared.module';
       ParticipantsComponent,
       ScheduleComponent,
       QuestionsComponent,
-      CreationWizardComponent
    ],
    imports: [
       ClarityModule,
