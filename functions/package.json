@@ -13,10 +13,12 @@
   "dependencies": {
     "firebase-admin": "~6.0.0",
     "firebase-functions": "^2.1.0",
+    "lodash": "^4.17.11",
     "request": "^2.88.0",
     "request-promise": "^4.2.2"
   },
   "devDependencies": {
+    "@types/lodash": "^4.14.119",
     "@types/request": "^2.48.1",
     "@types/request-promise": "^4.1.42",
     "tslint": "~5.8.0",

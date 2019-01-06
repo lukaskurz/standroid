@@ -6,6 +6,10 @@ import { Member } from './member';
 import { Standup } from './standup';
 import { Report } from './report';
 import { Installation } from './installation';
+import { Message } from 'firebase-functions/lib/providers/pubsub';
+import { SlackMessage } from './slackmessage';
+import field from './firestore-field-filter';
+import { stringify } from 'querystring';
 
 admin.initializeApp();
 const db = admin.firestore();
@@ -17,91 +21,92 @@ interface SlackEvent {
         subtype?: string,
         text: string,
         user: string,
-        channel: string
+        channel: string,
+        client_msg_id: string
     }
 }
 
-export const slack_event = functions.https.onRequest((request, response) => {
+export const slack_event = functions.https.onRequest(async (request, response) => {
     const body: SlackEvent = request.body;
     console.log(`Message body: ${JSON.stringify(request.body)}`);
 
     if (body.event.subtype !== undefined) {
         console.info("Bot message");
         response.status(200).send();
-        return Promise.resolve();
+    } else {
+        console.info("User message");
+        await db.collection("messages").doc(body.event.client_msg_id).set(body);
+        response.status(200).send();
     }
-    console.info("User message");
-    response.status(200).send();
-
-    console.log("Fetching installation");
-    return db.collection("installations").doc(body.team_id).get()
-        .then(iRef => {
-            const installation = iRef.data() as Installation;
-
-            console.log("Fetching active standup");
-            return db.collection("standups")
-                .where("memberId", "==", body.event.user)
-                .where("finished", "==", false).get()
-                .then(sRefs => {
-                    console.log(`Got ${sRefs.size} standups matched to message`);
-                    if (sRefs.size > 0) {
-                        const standup = sRefs.docs[0].data() as Standup;
-                        standup.answers.push(body.event.text);
-                        console.info("Handling standup now");
-                        return handleStandup(standup, installation, body.event.channel);
-                    }
-                    return Promise.resolve(null);
-                })
-        })
-        .catch(error => {
-            console.error(error)
-        })
 });
 
-function handleStandup(standup: Standup, installation: Installation, channel: string) {
-    const promisePool: Promise<any>[] = [];
+export const standup_finished = functions.firestore.document("/standups/{standupId}").onUpdate(
+    field("finished", "CHANGED", async (change, context) => {
+        const standup = change.after.data() as Standup;
+        if (standup.finished === true) {
+            const snapshot = await db.collection("installations").doc(standup.teamId).get();
+            const installation = snapshot.data() as Installation;
 
-    if (standup.answers.length === standup.questions.length) {
-        standup.finished = true;
-        console.info("Standup is finished");
+            await sendFinishedMessage(standup, installation);
+            await postFinishedStandup(standup, installation);
+        }
+    })
+)
 
-        console.log("Sending finished message");
-        promisePool.push(
-            new Promise((res, rej) => {
-                sendSlackMessage(installation, channel, generateFinishedMessage()).catch(v => rej(v)).then(v => res());
-            })
-        );
-
-        console.log("Fetching reports")
-        promisePool.push(
-            db.collection("reports").doc(standup.reportUid).get().then(ref => {
-                const report = ref.data() as Report;
-                return new Promise((res, rej) => {
-                    console.log("Sending finished Standup")
-                    sendFinishedStandup(
-                        installation,
-                        report,
-                        report.selectedMembers.find(m => m.id === standup.memberId),
-                        standup
-                    ).catch(v => rej(v)).then(v => res());
-                })
-            })
-        );
-
-        // handleAllReports(installation.team_id); // Check for open standups
-    } else {
-        const question = standup.questions[standup.answers.length];
-        promisePool.push(
-            new Promise((res, rej) => {
-                sendSlackMessage(installation, channel, question).catch(v => rej(v)).then(v => res());
-            })
-        );
+async function postFinishedStandup(standup: Standup, installation?: Installation) {
+    if (installation === undefined) {
+        const installationSnapshot = await db.collection("installations").doc(standup.teamId).get();
+        installation = installationSnapshot.data() as Installation;
     }
 
-    promisePool.push(db.collection("standups").doc(standup.uid).set(standup));
+    const snapshot = await db.collection("reports").doc(standup.reportUid).get()
+    const report = snapshot.data() as Report;
+    const member = report.selectedMembers.find(m => m.id === standup.memberId);
 
-    return Promise.all(promisePool);
+    const options = {
+        uri: "https://slack.com/api/chat.postMessage",
+        method: "POST",
+        json: true,
+        auth: {
+            "bearer": installation.bot.token
+        },
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: {
+            channel: standup.channelId,
+            attachments: [
+                {
+                    pretext: `:bangbang: *AT EASE* :bangbang: Another standup is finished.`,
+                    author_name: `${member.name} ~ ${member.real_name}`,
+                    author_icon: member.profile.image_72,
+                    color: "#1D5100",
+                    title: report.name,
+                    fields: standup.questions.map((value, index) => {
+                        return {
+                            title: value,
+                            value: standup.answers[index],
+                            short: false
+                        };
+                    }),
+                    footer: new Date().toTimeString()
+                }
+            ]
+        },
+    };
+
+    return rp(options);
 }
+
+async function sendFinishedMessage(standup: Standup, installation?: Installation) {
+    const text = generateFinishedMessage();
+    if (installation === undefined) {
+        const snapshot = await db.collection("installations").doc(standup.teamId).get();
+        installation = snapshot.data() as Installation;
+    }
+    return await sendSlackMessage(installation, standup.channelId, text);
+}
+
 
 function generateFinishedMessage() {
     const possibilities = 3;
@@ -118,83 +123,160 @@ function generateFinishedMessage() {
     return finishedMessage;
 }
 
+export const answers_changed = functions.firestore.document("/standups/{standupId}").onUpdate(
+    field("answers", "CHANGED", async (change, context) => {
+        const standup = change.after.data() as Standup;
+
+        // Finished
+        if (standup.answers.length === standup.questions.length) {
+            standup.finished = true;
+            await db.collection("standups").doc(standup.uid).update({ finished: standup.finished });
+        } else { // Next Question
+            await sendNextQuestion(standup);
+        }
+    })
+)
+
+async function sendNextQuestion(standup: Standup, installation?: Installation) {
+    if (installation === undefined) {
+        const snapshot = await db.collection("installations").doc(standup.teamId).get();
+        installation = snapshot.data() as Installation;
+    }
+    const question = standup.questions[standup.answers.length];
+    return await sendSlackMessage(installation, standup.channelId, question);
+}
+
+export const new_message = functions.firestore.document("/messages/{messageId}").onCreate(
+    async (snapshot, context) => {
+        const message = snapshot.data() as SlackMessage;
+        const standupSnapshot = await db.collection("standups")
+            .where("teamId", "==", message.team_id)
+            .where("memberId", "==", message.event.user)
+            .where("finished", "==", false).get();
+
+        if (standupSnapshot.size > 0) {
+            const standup = standupSnapshot.docs[0].data() as Standup;
+            standup.answers.push(message.event.text);
+            await db.collection("standups").doc(standup.uid).update({ answers: standup.answers });
+        }
+    }
+)
+
+export const new_standup = functions.firestore.document("/standups/{standupId}").onCreate(
+    async (snapshot, context) => {
+        const standup = snapshot.data() as Standup;
+        const installSnapshot = await db.collection("installations").doc(standup.teamId).get();
+        const installation = installSnapshot.data() as Installation;
+
+        await sendGreeting(standup, installation);
+        await sendNextQuestion(standup, installation);
+    }
+)
+
+async function sendGreeting(standup: Standup, installation?: Installation) {
+    let snapshot = await db.collection("reports").doc(standup.reportUid).get();
+    const report = snapshot.data() as Report;
+    const member = report.selectedMembers.find(m => m.id === standup.memberId);
+
+    const text = generateGreetingMessage(report, member);
+    if (installation === undefined) {
+        snapshot = await db.collection("installations").doc(standup.teamId).get();
+        installation = snapshot.data() as Installation;
+    }
+    return await sendSlackMessage(installation, standup.channelId, text);
+}
+
+function generateGreetingMessage(report: Report, member: Member) {
+    const possibilities = 2;
+    const messageRandom = Math.floor(Math.random() * possibilities);
+    let greeting: string;
+
+    switch (messageRandom) {
+        case 0: greeting = `:bangbang: *ATTENTION, Private <@${member.id}>* :bangbang: Time to answer some questions for your ${report.name}.`;
+            break;
+        case 1: greeting = `:eyes: *EYES FRONT, Private <@${member.id}>* :boom: Report in for your ${report.name}.`
+            break;
+    }
+
+    return greeting;
+}
+
 export const send_standups = functions.https.onRequest(async (request, response) => {
     // If request not from cloud scheduler
     if (
         JSON.parse(request.body).secret === undefined
         || JSON.parse(request.body).secret !== functions.config().cloudscheduler.secret
     ) {
-        return response.status(401).send();
+        response.status(401).send();
     }
 
-    await handleAllReports();
+    await checkAllReports();
 
-    return response.status(200).send();
+    response.status(200).send();
 });
 
-async function handleAllReports(team_id?: string) {
-    // tslint:disable-next-line:triple-equals
-    const reportRefs = team_id === undefined ?
-        await db.collection("reports").get()
-        : await db.collection("reports").where("team_id", "==", team_id).get();
-    console.log(`Got ${reportRefs.size} reports.`);
-    const promises: Promise<void>[] = [];
+async function checkAllReports() {
+    const snapshot = await db.collection("reports").get();
+    const reports = snapshot.docs.map(doc => doc.data() as Report);
 
-    reportRefs.forEach(ref => {
-        const report: Report = ref.data() as Report;
-        promises.push(handleReport(report));
+    const pool: Promise<{} | void>[] = [];
+
+    reports.forEach(report => {
+        pool.push(checkReport(report));
     });
 
-    return Promise.all(promises);
+    await Promise.all(pool);
 }
 
-async function handleReport(report: Report) {
-    const installation: Installation = (await db.collection("installations").doc(report.team_id).get()).data() as Installation;
+async function checkReport(report: Report) {
+    const snapshot = await db.collection("installations").doc(report.team_id).get();
+    const installation: Installation = snapshot.data() as Installation;
     const dueMembers = await getDueMembers(report);
 
     if (dueMembers.length <= 0) {
-        return;
+        return Promise.resolve();
     }
+
     const batch = db.batch();
+    const channelMap = await getDirectChannelIds(installation, dueMembers);
 
     for (const member of dueMembers) {
-        const standup = createStandup(member, report);
+        const query = await db.collection("standups")
+            .where("reportUid", "==", report.uid)
+            .where("memberId", "==", member.id)
+            .where("finished", "==", false).get();
+        const oldStandups = query.docs;
+        oldStandups.forEach(old => {
+            batch.update(old.ref, { finished: true });
+        })
+
+        const standup = createStandup(member, report, channelMap[member.id]);
         const standupRef = db.collection("standups").doc()
 
         batch.set(standupRef, standup);
         batch.update(standupRef, { uid: standupRef.id });
     }
 
-    batch.commit();
-
-    const channelMap = await getDirectChannelIds(installation, dueMembers);
-
-    const possibilities = 2;
-    const messageRandom = Math.floor(Math.random() * possibilities);
-
-    for (const member of dueMembers) {
-        let greeting: string;
-
-        switch (messageRandom) {
-            case 0: greeting = `:bangbang: *ATTENTION, Private <@${member.id}>* :bangbang: Time to answer some questions for your ${report.name}.`;
-                break;
-            case 1: greeting = `:eyes: *EYES FRONT, Private <@${member.id}>* :boom: Report in for your ${report.name}.`
-                break;
-        }
-
-        await sendSlackMessage(installation, channelMap[member.id], greeting);
-        sendSlackMessage(installation, channelMap[member.id], report.questions[0]);
-    }
+    return batch.commit();
 }
 
 async function getDueMembers(report: Report) {
     const dueMembers: Member[] = [];
 
+    const pool: Promise<void>[] = [];
+
     for (const member of report.selectedMembers) {
-        if (isMemberDue(member, report.schedule) && !(await isStandupCreated(member, report))) {
-            dueMembers.push(member);
+        if (isMemberDue(member, report.schedule)) {
+            const promise = isStandupCreated(member, report).then(created => {
+                if (!created) {
+                    dueMembers.push(member);
+                }
+            })
+            pool.push(promise);
         }
     }
+
+    await Promise.all(pool);
 
     return dueMembers;
 }
@@ -236,7 +318,7 @@ function convertToOtherTimezone(date: Date, offset: number) {
     return newDate;
 }
 
-function createStandup(member: Member, report: Report) {
+function createStandup(member: Member, report: Report, imChannelId: string) {
     const memberTime = convertToOtherTimezone(new Date(), member.tz_offset);
 
     const standup: Standup = {
@@ -247,6 +329,8 @@ function createStandup(member: Member, report: Report) {
         finished: false,
         memberId: member.id,
         reportUid: report.uid,
+        teamId: report.team_id,
+        channelId: imChannelId
     };
 
     return standup;
@@ -323,42 +407,6 @@ function sendSlackMessage(installation: Installation, channelId: string, text: s
         auth: {
             "bearer": installation.bot.token
         }
-    };
-
-    return rp(options);
-}
-
-function sendFinishedStandup(installation: Installation, report: Report, member: Member, standup: Standup) {
-    const options = {
-        uri: "https://slack.com/api/chat.postMessage",
-        method: "POST",
-        json: true,
-        auth: {
-            "bearer": installation.bot.token
-        },
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: {
-            channel: report.channel.id,
-            attachments: [
-                {
-                    pretext: `:bangbang: *AT EASE* :bangbang: Another standup is finished.`,
-                    author_name: `${member.name} ~ ${member.real_name}`,
-                    author_icon: member.profile.image_72,
-                    color: "#1D5100",
-                    title: report.name,
-                    fields: standup.questions.map((value, index) => {
-                        return {
-                            title: value,
-                            value: standup.answers[index],
-                            short: false
-                        };
-                    }),
-                    footer: new Date().toTimeString()
-                }
-            ]
-        },
     };
 
     return rp(options);
