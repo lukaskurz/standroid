@@ -13,7 +13,6 @@ import { ReportComponent } from '@modules/dashboard/pages/report/report.componen
 import { ParticipantsComponent } from '@modules/dashboard/components/participants/participants.component';
 import { ScheduleComponent } from '@modules/dashboard/components/schedule/schedule.component';
 import { QuestionsComponent } from '@modules/dashboard/components/questions/questions.component';
-import { InstallGuard } from './core/guards/install.guard';
 
 const dashboardRoutes: Routes = [
   { path: "", redirectTo: "report", pathMatch: "full" },
@@ -31,7 +30,7 @@ const routes: Routes = [
   { path: "register", component: RegisterComponent },
   { path: "email-verification", component: EmailVerificationComponent },
   { path: "setup", component: SetupComponent, canActivate: [AuthGuard] },
-  { path: "install", component: InstallComponent, children: installRoutes, canActivate: [InstallGuard] },
+  { path: "install", component: InstallComponent, children: installRoutes, canActivate: [AuthGuard] },
   { path: "dashboard", component: DashboardComponent, canActivate: [AuthGuard], children: dashboardRoutes },
 ];
 

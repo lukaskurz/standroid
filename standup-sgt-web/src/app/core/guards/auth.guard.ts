@@ -22,18 +22,6 @@ export class AuthGuard implements CanActivate {
           this.router.navigateByUrl("/email-verification");
           return Promise.reject();
         }
-
-        return this.afs.collection<{}>("installations", (ref) => {
-          return ref.where("creator_uid", "==", user.uid);
-        }).valueChanges().pipe(take(1)).toPromise();
-      })
-      .then(installations => {
-        if (installations.length <= 0) {
-          this.router.navigateByUrl("/install");
-          return Promise.reject();
-        } else {
-          return Promise.resolve();
-        }
       })
       .then(() => {
         return true;
