@@ -172,10 +172,11 @@ export class CreationWizardComponent implements OnInit {
   }
 
   saveReport() {
-    this.rs.createReport(this.report);
-    if (this.first) {
-      this.redirectToDashboard();
-    }
+    console.log(this.report);
+    // this.rs.createReport(this.report);
+    // if (this.first) {
+    //   this.redirectToDashboard();
+    // }
   }
 
   resetWizard() {

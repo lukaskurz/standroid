@@ -94,8 +94,8 @@
     <form #formPageOne="ngForm">
       <section class="form-block">
         <label>Enter the questions</label>
-        <div *ngFor="let q of report.questions" class="questions-wrapper">
-          <input clrInput placeholder="A question for the report" name="{{q}}" [(ngModel)]="q" />
+        <div *ngFor="let q of report.questions; let idx = index" class="questions-wrapper">
+          <input clrInput placeholder="A question for the report" name="{{q}}" [value]="q" (change)="report.questions[idx]=$event.target.value" />
           <button type="button" class="btn btn-icon" (click)="deleteQuestion(q)">
             <clr-icon shape="trash"></clr-icon>
           </button>
@@ -148,3 +148,4 @@
     <button type="button" class="btn btn-primary" (click)="redirectToDashboard()">Ok</button>
   </div>
 </clr-modal>
+
