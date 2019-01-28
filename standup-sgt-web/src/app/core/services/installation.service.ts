@@ -18,6 +18,9 @@ export class InstallationService {
 
   private setInstallation() {
     this.us.getUser().subscribe(user => {
+      if (user == null) {
+        return;
+      }
       this.afs
         .collection<Installation>("installations", ref => {
           return ref.where("creator_uid", "==", user.uid).limit(1);
@@ -35,6 +38,9 @@ export class InstallationService {
   hasInstallation() {
     return new Promise((res, rej) => {
       this.us.getUser().subscribe(user => {
+        if (user == null) {
+          return;
+        }
         this.afs
           .collection<Installation>("installations", ref => {
             return ref.where("creator_uid", "==", user.uid).limit(1);
