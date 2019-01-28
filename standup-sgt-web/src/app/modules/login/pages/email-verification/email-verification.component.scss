@@ -8,3 +8,10 @@
     background-position-x: right;
     background-size: auto 100%;
 }
+
+$img-size: 100px;
+.title img {
+    width: $img-size;
+    height: $img-size;
+    margin: 0 auto;
+}
