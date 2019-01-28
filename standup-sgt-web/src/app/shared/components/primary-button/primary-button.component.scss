@@ -1,10 +1,1 @@
 @import "../../../../theme.scss";
-
-/deep/ .btn.btn-primary {
-    color: $dark-green;
-    border-color: $neon-green;
-    background-color: $neon-green;
-    &:active {
-        box-shadow: none !important;
-    }
-}

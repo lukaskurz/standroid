@@ -30,15 +30,6 @@ h3 {
     height: 50px !important;
 }
 
-/deep/ .card {
-    background-color: $dark-green;
-}
-
-// Modal
-/deep/ div.modal-content {
-    background-color: $dark-green !important;
-}
-
 /deep/ div.modal-header button.close {
     // text-align: end!important;
     width: auto !important;

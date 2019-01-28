@@ -6,25 +6,3 @@
     flex: 1 1 auto;
     min-height: 1px;
 }
-
-.nav-list {
-    .nav-link {
-        color: white;
-        &:hover {
-            background: none !important;
-            font-weight: 600;
-            text-decoration: none;
-        }
-    }
-}
-
-/deep/ .sidenav .sidenav-content a.nav-link {
-    background-color: $dark-green;
-    color: white;
-
-    &:hover,
-    &.active {
-        background-color: $green;
-        color: white;
-    }
-}
