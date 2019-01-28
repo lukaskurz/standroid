@@ -1,8 +1,10 @@
 <div class="login-wrapper">
 	<div class="login">
 		<section class="title">
-			<h3 class="welcome">Get your own</h3>
-			Standup Sergeant
+			<img src="assets/img/robot.png"/>
+			<h4>Beep Boop, I am a useful and totally harmless bot</h4>
+			<h3 class="welcome"><s>Surrender yourself</s> Get your own</h3>
+			Standroid
 		</section>
 		<div class="login-group">
 			<input #email class="email" type="email" name="email" placeholder="Email" required>
@@ -14,7 +16,7 @@
 			</div>
 			<button type="button" class="btn btn-primary" (click)="register(email.value, password.value, repeatpassword.value)">Register</button>
 			<button type="button" class="btn btn-primary" (click)="registerWithGoogle()">Register with Google</button>
-			<a [routerLink]="['/login']" class="signup">Already have a sergeant? Log in</a>
+			<a [routerLink]="['/login']" class="signup">Already have a <s>Surveillance Bot</s> Standroid? Log in</a>
 		</div>
 	</div>
 </div>

@@ -1,18 +1,15 @@
 <div class="main-container">
-  <div id="alert_bar" class="alert alert-app-level">
+  <!-- <div id="alert_bar" class="alert alert-app-level">
     <div class="alert-items">
       <div class="alert-item static">
       </div>
     </div>
-  </div>
+  </div> -->
   <header class="header header-6">
     <div class="branding">
       <a class="nav-link" (click)="screaming = !screaming">
-        <img *ngIf="!screaming; else screamer" src="assets/img/iconfinder.png" alt="Standup Sergeant">
-        <ng-template #screamer>
-          <img src="assets/img/screaming.png" class="alert-image" alt="Standup Sergeant">
-        </ng-template>
-        <span class="title"><b>Standup Sergeant</b></span>
+        <img src="assets/img/robot.png" alt="Standup Sergeant">
+        <span class="title"><b>Standroid</b></span>
       </a>
     </div>
     <div class="header-nav">

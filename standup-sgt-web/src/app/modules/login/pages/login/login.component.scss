@@ -4,9 +4,18 @@
 }
 
 .login-wrapper {
-    // background: url("../../../../../assets/img/camouflage2.png");
+    background: url("../../../../../assets/img/backgrounds/circuit_board.png");
+    background-position-x: right;
+    background-size: auto 100%;
 }
 
 .btn.btn-primary:nth-of-type(2){
     margin-top:12px;
+}
+
+$img-size: 100px;
+.title img {
+    width: $img-size;
+    height: $img-size;
+    margin: 0 auto;
 }
