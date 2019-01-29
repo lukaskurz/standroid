@@ -17,7 +17,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
-            "outputPath": "dist/standup-sgt-web",
+            "outputPath": "dist/standroid-web",
             "index": "src/index.html",
             "main": "src/main.ts",
             "polyfills": "src/polyfills.ts",
@@ -66,18 +66,18 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "browserTarget": "standup-sgt-web:build"
+            "browserTarget": "standroid-web:build"
           },
           "configurations": {
             "production": {
-              "browserTarget": "standup-sgt-web:build:production"
+              "browserTarget": "standroid-web:build:production"
             }
           }
         },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "standup-sgt-web:build"
+            "browserTarget": "standroid-web:build"
           }
         },
         "test": {
@@ -140,5 +140,5 @@
       }
     }
   },
-  "defaultProject": "standup-sgt-web"
+  "defaultProject": "standroid-web"
 }

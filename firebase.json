@@ -10,7 +10,7 @@
     ]
   },
   "hosting": {
-    "public": "./standup-sgt-web/dist/standup-sgt-web",
+    "public": "./standroid-web/dist/standroid-web",
     "ignore": [
       "firebase.json",
       "**/.*",

@@ -5,12 +5,12 @@
 export const environment = {
   production: false,
   firebase: {
-    apiKey: "AIzaSyDaGod4oNhi1VtkA_1rbP-CD9uLUT5twgo",
-    authDomain: "standup-sgt.firebaseapp.com",
-    databaseURL: "https://standup-sgt.firebaseio.com",
-    projectId: "standup-sgt",
-    storageBucket: "standup-sgt.appspot.com",
-    messagingSenderId: "300464117827"
+    apiKey: "AIzaSyByJzXoZLGiOHg8uS26F0Ie1weKnFz-lSM",
+    authDomain: "standroid-1.firebaseapp.com",
+    databaseURL: "https://standroid-1.firebaseio.com",
+    projectId: "standroid-1",
+    storageBucket: "standroid-1.appspot.com",
+    messagingSenderId: "788360759565"
   }
 };
 

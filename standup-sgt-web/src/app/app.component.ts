@@ -5,5 +5,5 @@ import { Component } from '@angular/core';
   template: "<router-outlet></router-outlet>"
 })
 export class AppComponent {
-  title = 'standup-sgt-web';
+  title = 'standroid-web';
 }

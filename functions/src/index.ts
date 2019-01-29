@@ -1,14 +1,14 @@
 import * as functions from 'firebase-functions';
 import * as rp from 'request-promise';
 import * as admin from "firebase-admin";
-import { Schedule } from './schedule';
-import { Member } from './member';
-import { Standup } from './standup';
-import { Report } from './report';
-import { Installation } from './installation';
+import { Schedule } from './models/schedule';
+import { Member } from './models/member';
+import { Standup } from './models/standup';
+import { Report } from './models/report';
+import { Installation } from './models/installation';
 import { Message } from 'firebase-functions/lib/providers/pubsub';
-import { SlackMessage } from './slackmessage';
-import field from './firestore-field-filter';
+import { SlackMessage } from './models/slackmessage';
+import field from './util/firestore-field-filter';
 import { stringify } from 'querystring';
 
 admin.initializeApp();
