@@ -26,7 +26,7 @@ interface SlackEvent {
     }
 }
 
-export const slack_event = functions.https.onRequest(async (request, response) => {
+export const slack_event = functions.region('europe-west1').https.onRequest(async (request, response) => {
     const body: SlackEvent = request.body;
     console.log(`Message body: ${JSON.stringify(request.body)}`);
 
@@ -40,7 +40,7 @@ export const slack_event = functions.https.onRequest(async (request, response) =
     }
 });
 
-export const standup_finished = functions.firestore.document("/standups/{standupId}").onUpdate(
+export const standup_finished = functions.region('europe-west1').firestore.document("/standups/{standupId}").onUpdate(
     field("finished", "CHANGED", async (change, context) => {
         const standup = change.after.data() as Standup;
         if (standup.finished === true) {
@@ -123,7 +123,7 @@ function generateFinishedMessage() {
     return finishedMessage;
 }
 
-export const answers_changed = functions.firestore.document("/standups/{standupId}").onUpdate(
+export const answers_changed = functions.region('europe-west1').firestore.document("/standups/{standupId}").onUpdate(
     field("answers", "CHANGED", async (change, context) => {
         const standup = change.after.data() as Standup;
 
@@ -146,7 +146,7 @@ async function sendNextQuestion(standup: Standup, installation?: Installation) {
     return await sendSlackMessage(installation, standup.channelId, question);
 }
 
-export const new_message = functions.firestore.document("/messages/{messageId}").onCreate(
+export const new_message = functions.region('europe-west1').firestore.document("/messages/{messageId}").onCreate(
     async (snapshot, context) => {
         const message = snapshot.data() as SlackMessage;
         const standupSnapshot = await db.collection("standups")
@@ -162,7 +162,7 @@ export const new_message = functions.firestore.document("/messages/{messageId}")
     }
 )
 
-export const new_standup = functions.firestore.document("/standups/{standupId}").onCreate(
+export const new_standup = functions.region('europe-west1').firestore.document("/standups/{standupId}").onCreate(
     async (snapshot, context) => {
         const standup = snapshot.data() as Standup;
         const installSnapshot = await db.collection("installations").doc(standup.teamId).get();
@@ -201,7 +201,7 @@ function generateGreetingMessage(report: Report, member: Member) {
     return greeting;
 }
 
-export const send_standups = functions.https.onRequest(async (request, response) => {
+export const send_standups = functions.region('europe-west1').https.onRequest(async (request, response) => {
     // If request not from cloud scheduler
     if (
         JSON.parse(request.body).secret === undefined
@@ -412,7 +412,7 @@ function sendSlackMessage(installation: Installation, channelId: string, text: s
 }
 
 
-export const oauth_redirect = functions.https.onRequest(async (request, response) => {
+export const oauth_redirect = functions.region('europe-west1').https.onRequest(async (request, response) => {
     if (request.method !== "GET") {
         console.error(`Got unsupported ${request.method} request. Expected GET.`);
         return response.status(405).send("Only GET requests are accepted");
@@ -432,7 +432,7 @@ export const oauth_redirect = functions.https.onRequest(async (request, response
             code: request.query.code,
             client_id: functions.config().slack.id,
             client_secret: functions.config().slack.secret,
-            redirect_uri: `https://us-central1-${process.env.GCLOUD_PROJECT}.cloudfunctions.net/oauth_redirect`
+            redirect_uri: `https://europe-west1-${process.env.GCLOUD_PROJECT}.cloudfunctions.net/oauth_redirect`
         }
     };
 
