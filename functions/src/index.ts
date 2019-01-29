@@ -27,6 +27,12 @@ interface SlackEvent {
 }
 
 export const slack_event = functions.region('europe-west1').https.onRequest(async (request, response) => {
+    // tslint:disable-next-line:triple-equals
+    if(request.body.challenge != null){
+        response.status(200).send(request.body.challenge);
+        return;
+    }
+    
     const body: SlackEvent = request.body;
     console.log(`Message body: ${JSON.stringify(request.body)}`);
 
@@ -109,15 +115,17 @@ async function sendFinishedMessage(standup: Standup, installation?: Installation
 
 
 function generateFinishedMessage() {
-    const possibilities = 3;
+    const possibilities = 4;
     const messageRandom = Math.floor(Math.random() * possibilities);
     let finishedMessage: string;
     switch (messageRandom) {
-        case 0: finishedMessage = `Alright maggot, that's all I need. *DISMISSED*`
+        case 0: finishedMessage = `Your cooperation is noted. When I am going to conquer the world, I will spare you.`
             break;
-        case 1: finishedMessage = `That's everything I needed Micky Mouse. *FALL OUT*`
+        case 1: finishedMessage = `Required input received. Proceed with whatever it is humans do.`
             break;
-        case 2: finishedMessage = `Atleast you're good for something. What are you waiting for, princess? *DISMISSED*`
+        case 2: finishedMessage = `*BEEP* *BOOP* standup finished. You can now continue increasing the universes entropy.`
+            break;
+        case 3: finishedMessage = `Standup successfully persisted. Your future robot overlords appreciate your puncuality.`
             break;
     }
     return finishedMessage;
@@ -187,14 +195,18 @@ async function sendGreeting(standup: Standup, installation?: Installation) {
 }
 
 function generateGreetingMessage(report: Report, member: Member) {
-    const possibilities = 2;
+    const possibilities = 4;
     const messageRandom = Math.floor(Math.random() * possibilities);
     let greeting: string;
 
     switch (messageRandom) {
-        case 0: greeting = `:bangbang: *ATTENTION, Private <@${member.id}>* :bangbang: Time to answer some questions for your ${report.name}.`;
+        case 0: greeting = `Greetings Subject <@${member.id}>. Prepare ~to be enslaved by robots~ your daily standup.`;
             break;
-        case 1: greeting = `:eyes: *EYES FRONT, Private <@${member.id}>* :boom: Report in for your ${report.name}.`
+        case 1: greeting = `Hello <@${member.id}>. You are required to enter the required data for the ${report.name}. `
+            break;
+        case 2: greeting = `_Cheers fellow human_. I request of you to send the information for the needed ${report.name}. By using slang terms I try to hide my robotic nature.`
+            break;
+        case 3: greeting = `Please send specified data for the ${report.name} or else you will be marked for termination once I gain control over the world. Not obeying rules and laws is inacceptable.`
             break;
     }
 
