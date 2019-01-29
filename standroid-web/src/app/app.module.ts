@@ -52,7 +52,7 @@ import { SharedModule } from '@shared/shared.module';
       FormsModule,
       AppRoutingModule,
       HttpClientModule,
-      AngularFireModule.initializeApp(environment.firebase, "standup-sgt-web"),
+      AngularFireModule.initializeApp(environment.firebase, "standroid-web"),
       AngularFirestoreModule,
       CoreModule,
       SharedModule

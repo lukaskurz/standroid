@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "standup-sgt-web": {
+    "standroid-web": {
       "root": "",
       "sourceRoot": "src",
       "projectType": "application",
@@ -111,7 +111,7 @@
         }
       }
     },
-    "standup-sgt-web-e2e": {
+    "standroid-web-e2e": {
       "root": "e2e/",
       "projectType": "application",
       "prefix": "",
@@ -120,11 +120,11 @@
           "builder": "@angular-devkit/build-angular:protractor",
           "options": {
             "protractorConfig": "e2e/protractor.conf.js",
-            "devServerTarget": "standup-sgt-web:serve"
+            "devServerTarget": "standroid-web:serve"
           },
           "configurations": {
             "production": {
-              "devServerTarget": "standup-sgt-web:serve:production"
+              "devServerTarget": "standroid-web:serve:production"
             }
           }
         },
