@@ -1,25 +1,35 @@
-import { Injectable } from '@angular/core';
-import { InstallationService } from './installation.service';
-import { Installation } from '@app/shared/models/installation';
-import { HttpClient } from '@angular/common/http';
-import { SlackUserListResponse, SlackChannelListResponse } from '@app/shared/models/slack-responses';
-import { Member } from '@app/shared/models/member';
-import { Subject, ReplaySubject } from 'rxjs';
-import { Channel } from '@app/shared/models/channel';
-import { checkNoChanges } from '@angular/core/src/render3/instructions';
+import { Injectable } from "@angular/core";
+import { InstallationService } from "./installation.service";
+import { Installation } from "@app/shared/models/installation";
+import { HttpClient } from "@angular/common/http";
+import {
+  SlackUserListResponse,
+  SlackChannelListResponse
+} from "@app/shared/models/slack-responses";
+import { Member } from "@app/shared/models/member";
+import { Subject, ReplaySubject } from "rxjs";
+import { Channel } from "@app/shared/models/channel";
+import { checkNoChanges } from "@angular/core/src/render3/instructions";
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: "root"
 })
 export class SlackService {
-
   private teamMembers: ReplaySubject<Member[]>;
   private channels: ReplaySubject<Channel[]>;
   constructor(private is: InstallationService, private http: HttpClient) {
     this.teamMembers = new ReplaySubject(1);
     this.channels = new ReplaySubject(1);
-    this.requestTeamMembers().then(members => this.teamMembers.next(members));
-    this.requestChannels().then(channels => this.channels.next(channels));
+    this.requestTeamMembers().then(members => {
+      if (members != null) {
+        this.teamMembers.next(members);
+      }
+    });
+    this.requestChannels().then(channels => {
+      if (channels != null) {
+        this.channels.next(channels);
+      }
+    });
   }
 
   getChannels(refresh = false) {
@@ -45,9 +55,11 @@ export class SlackService {
       this.is.getInstallation().subscribe(i => resolve(i));
     })) as Installation;
 
-    const response: SlackChannelListResponse = (
-      await this.http.get(`https://slack.com/api/channels.list?token=${installation.bot.token}`).toPromise()
-    ) as SlackChannelListResponse;
+    const response: SlackChannelListResponse = (await this.http
+      .get(
+        `https://slack.com/api/channels.list?token=${installation.bot.token}`
+      )
+      .toPromise()) as SlackChannelListResponse;
 
     if (response.ok === false) {
       return Promise.reject();
@@ -55,8 +67,14 @@ export class SlackService {
 
     const channels: Channel[] = response.channels;
 
-    if (response.response_metadata.next_cursor != null && response.response_metadata.next_cursor !== "") {
-      const otherChannels = await this.requestChannelsWithPagination(installation.bot.token, response.response_metadata.next_cursor);
+    if (
+      response.response_metadata.next_cursor != null &&
+      response.response_metadata.next_cursor !== ""
+    ) {
+      const otherChannels = await this.requestChannelsWithPagination(
+        installation.bot.token,
+        response.response_metadata.next_cursor
+      );
       return channels.concat(otherChannels);
     }
 
@@ -68,9 +86,11 @@ export class SlackService {
       this.is.getInstallation().subscribe(i => resolve(i));
     })) as Installation;
 
-    const response: SlackUserListResponse = (
-      await this.http.get(`https://slack.com/api/users.list?token=${installation.access_token}`).toPromise()
-    ) as SlackUserListResponse;
+    const response: SlackUserListResponse = (await this.http
+      .get(
+        `https://slack.com/api/users.list?token=${installation.access_token}`
+      )
+      .toPromise()) as SlackUserListResponse;
 
     if (response.ok === false) {
       return Promise.reject();
@@ -78,8 +98,14 @@ export class SlackService {
 
     const members: Member[] = response.members;
 
-    if (response.response_metadata.next_cursor != null && response.response_metadata.next_cursor !== "") {
-      const otherMembers = await this.requestMembersWithPagination(installation.access_token, response.response_metadata.next_cursor);
+    if (
+      response.response_metadata.next_cursor != null &&
+      response.response_metadata.next_cursor !== ""
+    ) {
+      const otherMembers = await this.requestMembersWithPagination(
+        installation.access_token,
+        response.response_metadata.next_cursor
+      );
       return members.concat(otherMembers);
     }
 
@@ -91,13 +117,17 @@ export class SlackService {
     let finished = false;
     let errorCount = 0;
     while (!finished || errorCount < 5) {
-      const nextMembers = await this.http.get(`https://slack.com/api/users.list?token=${token}&cursor=${cursor}`)
+      const nextMembers = await this.http
+        .get(`https://slack.com/api/users.list?token=${token}&cursor=${cursor}`)
         .map((response: SlackUserListResponse) => {
           if (response.ok === false) {
             errorCount++;
             return [];
           } else {
-            if (response.response_metadata.next_cursor != null && response.response_metadata.next_cursor !== "") {
+            if (
+              response.response_metadata.next_cursor != null &&
+              response.response_metadata.next_cursor !== ""
+            ) {
               cursor = response.response_metadata.next_cursor;
             } else {
               finished = true;
@@ -105,7 +135,8 @@ export class SlackService {
 
             return response.members;
           }
-        }).toPromise();
+        })
+        .toPromise();
 
       members = members.concat(nextMembers);
     }
@@ -118,13 +149,19 @@ export class SlackService {
     let finished = false;
     let errorCount = 0;
     while (!finished || errorCount < 5) {
-      const nextChannels = await this.http.get(`https://slack.com/api/channels.list?token=${token}&cursor=${cursor}`)
+      const nextChannels = await this.http
+        .get(
+          `https://slack.com/api/channels.list?token=${token}&cursor=${cursor}`
+        )
         .map((response: SlackChannelListResponse) => {
           if (response.ok === false) {
             errorCount++;
             return [];
           } else {
-            if (response.response_metadata.next_cursor != null && response.response_metadata.next_cursor !== "") {
+            if (
+              response.response_metadata.next_cursor != null &&
+              response.response_metadata.next_cursor !== ""
+            ) {
               cursor = response.response_metadata.next_cursor;
             } else {
               finished = true;
@@ -132,12 +169,12 @@ export class SlackService {
 
             return response.channels;
           }
-        }).toPromise();
+        })
+        .toPromise();
 
       channels = channels.concat(nextChannels);
     }
 
     return channels;
   }
-
 }

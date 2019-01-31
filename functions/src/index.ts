@@ -29,6 +29,7 @@ interface SlackEvent {
 export const slack_event = functions.region('europe-west1').https.onRequest(async (request, response) => {
     // tslint:disable-next-line:triple-equals
     if(request.body.challenge != null){
+        console.log("got an oauth challenge");
         response.status(200).send(request.body.challenge);
         return;
     }
@@ -36,25 +37,34 @@ export const slack_event = functions.region('europe-west1').https.onRequest(asyn
     const body: SlackEvent = request.body;
     console.log(`Message body: ${JSON.stringify(request.body)}`);
 
-    if (body.event.subtype !== undefined) {
+    if (body.event.subtype !== undefined && body.event.subtype === "bot_message") {
         console.info("Bot message");
         response.status(200).send();
     } else {
         console.info("User message");
-        await db.collection("messages").doc(body.event.client_msg_id).set(body);
+        try {
+            await db.collection("messages").doc(body.event.client_msg_id).create(body);
+        } catch (error) {
+            console.warn("document already exists");
+        }
         response.status(200).send();
     }
 });
 
 export const standup_finished = functions.region('europe-west1').firestore.document("/standups/{standupId}").onUpdate(
     field("finished", "CHANGED", async (change, context) => {
+        console.log("detected changes to standup");
         const standup = change.after.data() as Standup;
+        console.log({before: change.before.data(), after: change.after.data()});
         if (standup.finished === true) {
+            console.log("standup is now finised")
             const snapshot = await db.collection("installations").doc(standup.teamId).get();
             const installation = snapshot.data() as Installation;
 
             await sendFinishedMessage(standup, installation);
+            console.log("sent finished message");
             await postFinishedStandup(standup, installation);
+            console.log("sent finished standup");
         }
     })
 )
@@ -83,7 +93,7 @@ async function postFinishedStandup(standup: Standup, installation?: Installation
             channel: report.channel.id,
             attachments: [
                 {
-                    pretext: `:bangbang: *AT EASE* :bangbang: Another standup is finished.`,
+                    pretext: `Another report has been finished.`,
                     author_name: `${member.name} ~ ${member.real_name}`,
                     author_icon: member.profile.image_72,
                     color: "#1D5100",
@@ -125,7 +135,7 @@ function generateFinishedMessage() {
             break;
         case 2: finishedMessage = `*BEEP* *BOOP* standup finished. You can now continue increasing the universes entropy.`
             break;
-        case 3: finishedMessage = `Standup successfully persisted. Your future robot overlords appreciate your puncuality.`
+        case 3: finishedMessage = `Standup successfully persisted. Your future robot overlords appreciate your punctuality.`
             break;
     }
     return finishedMessage;
@@ -133,13 +143,17 @@ function generateFinishedMessage() {
 
 export const answers_changed = functions.region('europe-west1').firestore.document("/standups/{standupId}").onUpdate(
     field("answers", "CHANGED", async (change, context) => {
+        console.log("detected changes to standup");
         const standup = change.after.data() as Standup;
+        console.log({before: change.before.data(), after: change.after.data()});
 
         // Finished
         if (standup.answers.length === standup.questions.length) {
             standup.finished = true;
+            console.log("standup is finished")
             await db.collection("standups").doc(standup.uid).update({ finished: standup.finished });
         } else { // Next Question
+            console.log("sending next question");
             await sendNextQuestion(standup);
         }
     })
@@ -150,22 +164,34 @@ async function sendNextQuestion(standup: Standup, installation?: Installation) {
         const snapshot = await db.collection("installations").doc(standup.teamId).get();
         installation = snapshot.data() as Installation;
     }
+
+    if(standup.answers.length >= standup.questions.length){
+        return;
+    }
+
     const question = standup.questions[standup.answers.length];
+    console.log(`sending next question: ${question}`);
     return await sendSlackMessage(installation, standup.channelId, question);
 }
 
 export const new_message = functions.region('europe-west1').firestore.document("/messages/{messageId}").onCreate(
     async (snapshot, context) => {
+        console.log("new message inserted")
         const message = snapshot.data() as SlackMessage;
+        console.log(JSON.stringify(message));
         const standupSnapshot = await db.collection("standups")
             .where("teamId", "==", message.team_id)
             .where("memberId", "==", message.event.user)
             .where("finished", "==", false).get();
 
         if (standupSnapshot.size > 0) {
+            console.log(`found ${standupSnapshot.size} matching standup documents`);
             const standup = standupSnapshot.docs[0].data() as Standup;
+            console.log(`standup uid = ${standup.uid}`);
             standup.answers.push(message.event.text);
             await db.collection("standups").doc(standup.uid).update({ answers: standup.answers });
+        } else {
+            console.log("found no matching standup documents")
         }
     }
 )
@@ -173,11 +199,15 @@ export const new_message = functions.region('europe-west1').firestore.document("
 export const new_standup = functions.region('europe-west1').firestore.document("/standups/{standupId}").onCreate(
     async (snapshot, context) => {
         const standup = snapshot.data() as Standup;
+        console.log("new standup created");
+        console.log(JSON.stringify(standup));
         const installSnapshot = await db.collection("installations").doc(standup.teamId).get();
         const installation = installSnapshot.data() as Installation;
 
         await sendGreeting(standup, installation);
+        console.log("sent greeting");
         await sendNextQuestion(standup, installation);
+        console.log("sent first question");
     }
 )
 
@@ -219,10 +249,12 @@ export const send_standups = functions.region('europe-west1').https.onRequest(as
         JSON.parse(request.body).secret === undefined
         || JSON.parse(request.body).secret !== functions.config().cloudscheduler.secret
     ) {
+        console.warn("got a scheduler request without the secret")
         response.status(401).send();
     }
 
     await checkAllReports();
+    console.log("checked all reports")
 
     response.status(200).send();
 });
@@ -431,6 +463,7 @@ export const oauth_redirect = functions.region('europe-west1').https.onRequest(a
     }
 
     if (!request.query && !request.query.code) {
+        console.error("No code attribute in request");
         return response.status(401).send("Missing query attribute 'code'");
     }
 

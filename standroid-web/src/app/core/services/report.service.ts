@@ -1,32 +1,42 @@
-import { Injectable } from '@angular/core';
-import { AngularFirestore } from '@angular/fire/firestore';
-import { UserService } from './user.service';
-import { ReplaySubject } from 'rxjs';
-import { Report } from '@app/shared/models/report';
-import { Schedule } from '@app/shared/models/schedule';
-import { Member } from '@app/shared/models/member';
-import { take, tap } from 'rxjs/operators';
-import { InstallationService } from './installation.service';
-import { User } from 'firebase';
-import { Installation } from '@app/shared/models/installation';
+import { Injectable } from "@angular/core";
+import { AngularFirestore } from "@angular/fire/firestore";
+import { UserService } from "./user.service";
+import { ReplaySubject } from "rxjs";
+import { Report } from "@app/shared/models/report";
+import { Schedule } from "@app/shared/models/schedule";
+import { Member } from "@app/shared/models/member";
+import { take, tap } from "rxjs/operators";
+import { InstallationService } from "./installation.service";
+import { User } from "firebase";
+import { Installation } from "@app/shared/models/installation";
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: "root"
 })
 export class ReportService {
-
   private reports: ReplaySubject<Report[]>;
 
-  constructor(private afs: AngularFirestore, private us: UserService, private is: InstallationService) {
+  constructor(
+    private afs: AngularFirestore,
+    private us: UserService,
+    private is: InstallationService
+  ) {
     this.reports = new ReplaySubject(1);
     this.setReports();
   }
 
   private setReports() {
     this.us.getUser().subscribe(user => {
-      this.afs.collection<Report>("reports", ref => {
-        return ref.where("creator_uid", "==", user.uid);
-      }).valueChanges().subscribe(this.reports);
+      this.afs
+        .collection<Report>("reports", ref => {
+          return ref.where("creator_uid", "==", user.uid);
+        })
+        .valueChanges()
+        .subscribe(reports => {
+          if (reports != null) {
+            this.reports.next(reports);
+          }
+        });
     });
   }
 
@@ -62,7 +72,10 @@ export class ReportService {
       });
     })) as Installation;
     report.team_id = installation.team_id;
-    return this.afs.collection("reports").doc(report.uid).set(report);
+    return this.afs
+      .collection("reports")
+      .doc(report.uid)
+      .create(report);
   }
 
   private updateReport(report: Report, changes: {}) {

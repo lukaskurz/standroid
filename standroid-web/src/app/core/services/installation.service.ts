@@ -27,7 +27,11 @@ export class InstallationService {
         })
         .valueChanges()
         .map(val => val[0])
-        .subscribe(this.installation);
+        .subscribe(installation => {
+          if (installation != null) {
+            this.installation.next(installation);
+          }
+        });
     });
   }
 
