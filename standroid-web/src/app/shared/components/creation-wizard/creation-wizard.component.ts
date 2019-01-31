@@ -39,7 +39,7 @@ export class CreationWizardComponent implements OnInit {
     },
     questions: [
       "What did you do yesterday?",
-      "What do plan on doing today?",
+      "What do you plan on doing today?",
       "Did something hinder you with your work?",
       "Something worth mentioning?"
     ],
