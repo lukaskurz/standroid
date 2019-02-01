@@ -6,10 +6,8 @@ import { Member } from './models/member';
 import { Standup } from './models/standup';
 import { Report } from './models/report';
 import { Installation } from './models/installation';
-import { Message } from 'firebase-functions/lib/providers/pubsub';
 import { SlackMessage } from './models/slackmessage';
 import field from './util/firestore-field-filter';
-import { stringify } from 'querystring';
 
 admin.initializeApp();
 const db = admin.firestore();
@@ -115,8 +113,8 @@ async function postFinishedStandup(standup: Standup, installation?: Installation
                     title: report.name,
                     fields: standup.questions.map((value, index) => {
                         return {
-                            title: value,
-                            value: standup.answers[index],
+                            title: value.text,
+                            value: standup.answers[index].text,
                             short: false
                         };
                     }),
