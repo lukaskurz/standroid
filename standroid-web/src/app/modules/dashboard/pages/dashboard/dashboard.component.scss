@@ -1,0 +1,20 @@
+@import "../../../../../theme.scss";
+$branding-img-width: 45px;
+$branding-img-width-small: 36px;
+$branding-img-width-scream: 48px;
+
+.alert-image {
+    width: $branding-img-width-scream !important;
+    height: $branding-img-width-scream !important;
+    position: relative;
+}
+
+.branding img {
+    width: $branding-img-width;
+    height: $branding-img-width;
+    margin: 0 20px 0 8px;
+}
+
+/deep/ .content-container>.ng-star-inserted {
+    width: 100% !important;
+}

@@ -1,9 +1,0 @@
-@import "../../../../theme.scss";
-
-/deep/ .btn.btn-outline {
-    color: $neon-green;
-    border-color: $neon-green;
-    &:active {
-        box-shadow: none !important;
-    }
-}

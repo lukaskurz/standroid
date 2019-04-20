@@ -1,0 +1,36 @@
+@import "../../../../../theme.scss";
+h3 {
+    padding-bottom: 24px;
+}
+
+.member-wrapper {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin-top: 10px;
+    color: white;
+    &:first-of-type {
+        margin-top: 0px;
+    }
+    img {
+        width: 24px;
+        height: 24px;
+        border-radius: 5px;
+        flex-grow: 0;
+    }
+    span {
+        margin-left: 5px;
+        min-width: 100px;
+        display: inline-block;
+        flex-grow: 1;
+    }
+}
+
+/deep/ .modal-body.no-scroll {
+    height: 50px !important;
+}
+
+/deep/ div.modal-header button.close {
+    // text-align: end!important;
+    width: auto !important;
+}

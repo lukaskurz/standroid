@@ -1,0 +1,22 @@
+<div class="login-wrapper">
+	<div class="login">
+		<section class="title">
+			<img src="assets/img/robot.png"/>
+			<h4>Beep Boop, I am a useful and totally harmless bot</h4>
+			<h3 class="welcome"><s>Surrender yourself</s> Get your own</h3>
+			Standroid
+		</section>
+		<div class="login-group">
+			<input #email class="email" type="email" name="email" placeholder="Email" required>
+			<input #password class="password" type="password" name="password" placeholder="Password" required minlength="8">
+			<input #repeatpassword class="password" type="password" name="repeatpassword" placeholder="Repeat the Password"
+			 required minlength="8">
+			<div *ngIf="registerError" class="error" [class.active]="registerError">
+				{{registerError}}
+			</div>
+			<button type="button" class="btn btn-primary" (click)="register(email.value, password.value, repeatpassword.value)">Register</button>
+			<button type="button" class="btn btn-primary" (click)="registerWithGoogle()">Register with Google</button>
+			<a [routerLink]="['/login']" class="signup">Already have a <s>Surveillance Bot</s> Standroid? Log in</a>
+		</div>
+	</div>
+</div>
